@@ -19,10 +19,20 @@ public class PokerPlayer {
 		hand = new HandOfCards(deck);
 	}
 
-	// TODO 
+	// Method which discards up to 3 cards from the hand.
 	public int discard() {
-
-		return 0;
+		int counter = 0;
+		for (int i = 0; i < HandOfCards.HAND_SIZE; i++)  {
+			int discardProbability = hand.getDiscardProbability(i);
+			// Generate random number between 1 and 99.
+			int random = (int) (Math.random() * HandOfCards.PROBABILITY_MAXIMUM - 1) + 1;
+			// If generated random number is in the range between 0 and discardProbability, discard the card.
+			if (random <= discardProbability && counter < MAX_CARDS_TO_DISCARD) {
+				hand.replaceCard(i);
+				counter++;
+			}
+		}
+		return counter;
 	}
 
 	// Should not be here, used only for testing in the Main class.
