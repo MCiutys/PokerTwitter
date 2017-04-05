@@ -35,11 +35,6 @@ public class PokerPlayer {
 		return counter;
 	}
 
-	// Should not be here, used only for testing in the Main class.
-	public int getGameValue() {
-		return hand.getGameValue();
-	}
-
 	@Override
 	public String toString() {
 		return "Poker player's hand: " + hand + ", Game value: " + hand.getGameValue();

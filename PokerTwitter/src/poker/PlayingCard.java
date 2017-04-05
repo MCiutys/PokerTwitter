@@ -45,22 +45,18 @@ public class PlayingCard {
 		this.gameValue = gameValue;
 	}
 
-	// Getter method for card type.
 	public String getType() {
 		return type;
 	}
 
-	// Getter method for cards suit.
 	public char getSuit() {
 		return suit;
 	}
 
-	// Getter method for cards face value.
 	public int getFaceValue() {
 		return faceValue;
 	}
 
-	// Getter method for cards game value.
 	public int getGameValue() {
 		return gameValue;
 	}

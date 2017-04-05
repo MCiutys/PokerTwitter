@@ -15,8 +15,8 @@ import java.util.Random;
 public class DeckOfCards {
 
 	public static final int NUMBER_OF_CARDS = 52;
-	public static final int NUMBER_OF_SUITS = 4;
 	private static final char[] SUITS = {PlayingCard.HEARTS, PlayingCard.SPADES, PlayingCard.DIAMONDS, PlayingCard.CLUBS};
+	public static final int NUMBER_OF_SUITS = SUITS.length;
 
 	private PlayingCard[] cards;
 	// Keeps track of next card position that will be dealt.

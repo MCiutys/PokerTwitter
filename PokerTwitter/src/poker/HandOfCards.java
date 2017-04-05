@@ -40,7 +40,7 @@ public class HandOfCards {
 	public HandOfCards(DeckOfCards deck) {
 		this.deck = deck;
 		hand = new PlayingCard[HAND_SIZE];
-		for (int i = 0; i < hand.length; i++) {
+		for (int i = 0; i < HAND_SIZE; i++) {
 			hand[i] = deck.dealNext();
 		}
 		sort();
@@ -50,7 +50,7 @@ public class HandOfCards {
 	// Return true or false depending if card was successfully replaced.
 	public boolean replaceCard(int index) {
 		// Check if index is in bounds of the array and check that new card is not null.
-		if (index >= 0 && index < hand.length) {
+		if (index >= 0 && index < HAND_SIZE) {
 			PlayingCard newCard = deck.dealNext();
 			// Check if not null (if there are cards left in a deck)
 			if (newCard != null) {
@@ -68,7 +68,7 @@ public class HandOfCards {
 
 	// Returns probability of card to be discarded.
 	public int getDiscardProbability(int cardPosition) {
-		if (cardPosition < 0 || cardPosition > hand.length - 1) return (int) PROBABILITY_MINIMUM - 1;
+		if (cardPosition < 0 || cardPosition > HAND_SIZE - 1) return (int) PROBABILITY_MINIMUM - 1;
 		if (isRoyalFlush()) return (int) PROBABILITY_MINIMUM; // Cannot be improved.
 		if (isStraightFlush()) return straightFlushImprove(cardPosition); // Upgrade to royal flush or higher straight flush.
 		if (isFourOfAKind()) return quadsImprove(cardPosition); // Upgrade kicker card.
@@ -91,7 +91,7 @@ public class HandOfCards {
 	private int brokenHandImprove(int cardPosition) {
 		boolean isOnePair = isOnePair();
 
-		float neededCardProbability = (1f / (DeckOfCards.NUMBER_OF_CARDS - hand.length)) * PROBABILITY_MAXIMUM;
+		float neededCardProbability = (1f / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE)) * PROBABILITY_MAXIMUM;
 		int overallProbability = Math.round(((PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * ((float) hand[cardPosition].getGameValue()
 				/ ((float) PlayingCard.ACE_GAME_VALUE + PlayingCard.GAME_VALUE_OFFSET))))) / neededCardProbability);
 
@@ -107,14 +107,14 @@ public class HandOfCards {
 
 		brokenHandKickerPosition = getBrokenFlushPosition();
 		if (brokenHandKickerPosition != INVALID_POSITION) {
-			float noSameSuitInDeck = ((DeckOfCards.NUMBER_OF_CARDS / DeckOfCards.NUMBER_OF_SUITS) - (hand.length - 1));
-			float flushFifthCardProbability = (noSameSuitInDeck / (DeckOfCards.NUMBER_OF_CARDS - hand.length)) * PROBABILITY_MAXIMUM;
+			float noSameSuitInDeck = ((DeckOfCards.NUMBER_OF_CARDS / DeckOfCards.NUMBER_OF_SUITS) - (HAND_SIZE - 1));
+			float flushFifthCardProbability = (noSameSuitInDeck / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE)) * PROBABILITY_MAXIMUM;
 			return (int) ((brokenHandKickerPosition == cardPosition) ? flushFifthCardProbability : PROBABILITY_MINIMUM);
 		}
 
 		brokenHandKickerPosition = getBrokenStraightPosition();
 		if (brokenHandKickerPosition != INVALID_POSITION) {
-			float straightCardProbability = ((float) DeckOfCards.NUMBER_OF_SUITS / (DeckOfCards.NUMBER_OF_CARDS - hand.length)) * PROBABILITY_MAXIMUM / 10f;
+			float straightCardProbability = ((float) DeckOfCards.NUMBER_OF_SUITS / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE)) * PROBABILITY_MAXIMUM / 10f;
 			float straightFifthCardProbability = straightCardProbability * (PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * (((float) (hand[cardPosition].getGameValue() - PlayingCard.GAME_VALUE_OFFSET)) / ((float) PlayingCard.ACE_GAME_VALUE + PlayingCard.GAME_VALUE_OFFSET))));
 			return (int) ((brokenHandKickerPosition == cardPosition || ((isOnePair) ? brokenHandKickerPosition + 1 : INVALID_POSITION) == cardPosition) ? straightFifthCardProbability : PROBABILITY_MINIMUM);
 		}
@@ -160,7 +160,7 @@ public class HandOfCards {
 		// Check if hand has a pattern of: X-X-X-X-Y
 		boolean highLow = true;
 
-		for (int i = 0; i < hand.length - 2; i++) {
+		for (int i = 0; i < HAND_SIZE - 2; i++) {
 			if (hand[i].getGameValue() - hand[i + 1].getGameValue() != 1) {
 				highLow = false;
 				break;
@@ -169,18 +169,18 @@ public class HandOfCards {
 
 		// If X-X-X-(X)P-P
 		// I return second last card since either of them can be replaced to get straight since they are the same.
-		if (highLow) return (isOnePair) ? hand.length - 2 : hand.length - 1;
+		if (highLow) return (isOnePair) ? HAND_SIZE - 2 : HAND_SIZE - 1;
 
 		// Check if hand has a pattern of: Y-X-X-X-X
 		boolean lowHigh = true;
-		for (int i = hand.length - 1; i > 1; i--) {
+		for (int i = HAND_SIZE - 1; i > 1; i--) {
 			if (hand[i - 1].getGameValue() - hand[i].getGameValue() != 1) {
 				lowHigh = false;
 				break;
 			}
 		}
 
-		if (lowHigh) return HAND_SIZE - hand.length; // 0;
+		if (lowHigh) return 0;
 
 		// 4 Patterns of one pair that we could upgrade to straight		
 		// These two patterns are going to be recognized and dealt with, by highLow and lowHigh code above.
@@ -196,7 +196,7 @@ public class HandOfCards {
 
 			// Subtract game values of one pair cards and get the sum. If sum is 3 or 2 then,
 			// hand should contain broken straight.
-			for (int i = 0; i < hand.length - 1; i++) {
+			for (int i = 0; i < HAND_SIZE - 1; i++) {
 				PlayingCard card = hand[i];
 				PlayingCard nextCard = hand[i + 1];
 				// Find pair.
@@ -214,7 +214,7 @@ public class HandOfCards {
 						int sum = hand[i - 1].getGameValue() - card.getGameValue() + nextCard.getGameValue() - hand[i + 2].getGameValue();
 						if (sum == 2 || sum == 3) {
 							// Just to make sure, check that first and last cards are apart by at most 4.
-							if ((hand[0].getGameValue() - hand[hand.length - 1].getGameValue()) == hand.length - 1) {
+							if ((hand[0].getGameValue() - hand[HAND_SIZE - 1].getGameValue()) == HAND_SIZE - 1) {
 								position = i;
 							}
 						}
@@ -231,7 +231,7 @@ public class HandOfCards {
 		Map<Character, Integer> suitCount = new HashMap<Character, Integer>();
 
 		// Count different suits.
-		for (int i = 0; i < hand.length; i++) {
+		for (int i = 0; i < HAND_SIZE; i++) {
 			char suit = hand[i].getSuit();
 			if (suitCount.containsKey(suit)) {
 				suitCount.put(suit, suitCount.get(suit) + 1);
@@ -242,10 +242,10 @@ public class HandOfCards {
 
 		for (Map.Entry<Character, Integer> entry : suitCount.entrySet()) {
 			// Find suit of which we have 4 cards.
-			if (entry.getValue() == hand.length - 1) {
+			if (entry.getValue() == HAND_SIZE - 1) {
 				char matchSuit = entry.getKey();
 				// Find a card which is not of same suit and return it.
-				for (int i = 0; i < hand.length; i++)
+				for (int i = 0; i < HAND_SIZE; i++)
 					if (hand[i].getSuit() != matchSuit) return i;
 			}
 		}
@@ -256,7 +256,7 @@ public class HandOfCards {
 	private int twoPairImprove(int cardPosition) {
 		final int firstCardGameValue = hand[0].getGameValue();
 		final int middleCardGameValue = hand[2].getGameValue();
-		final int lastCardGameValue = hand[hand.length - 1].getGameValue();
+		final int lastCardGameValue = hand[HAND_SIZE - 1].getGameValue();
 
 		boolean zeroOne = firstCardGameValue == hand[1].getGameValue();
 		boolean twoThree = middleCardGameValue == hand[3].getGameValue();
@@ -264,13 +264,13 @@ public class HandOfCards {
 		boolean threeFour = hand[3].getGameValue() == lastCardGameValue;
 
 		int higherPairPosition = 0;
-		int lowerPairPosition = hand.length;
+		int lowerPairPosition = HAND_SIZE;
 		int kickerPosition = 2;
 
 		// Find position of both pairs and a kicker card.
 		if (zeroOne && twoThree) {
 			lowerPairPosition = 2;
-			kickerPosition = hand.length - 1;
+			kickerPosition = HAND_SIZE - 1;
 		} else if (oneTwo && threeFour) {
 			higherPairPosition = 2;
 			kickerPosition = 0;
@@ -299,7 +299,7 @@ public class HandOfCards {
 		int chosenCardGameValue = hand[cardPosition].getGameValue();
 
 		// Find the pair.
-		for (int i = 0; i < hand.length - 1; i++) {
+		for (int i = 0; i < HAND_SIZE - 1; i++) {
 			if (hand[i].getGameValue() == hand[i + 1].getGameValue()) {
 				onePairPosition = i;
 				break;
@@ -336,7 +336,7 @@ public class HandOfCards {
 	// Returns probability of improving flush if card at cardPosition would be discarded.
 	private int flushImprove(int cardPosition) {
 		float probability = (PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * ((float) (hand[cardPosition].getGameValue() - PlayingCard.GAME_VALUE_OFFSET) / (PlayingCard.ACE_GAME_VALUE - PlayingCard.GAME_VALUE_OFFSET))))
-				- ((((float) (DeckOfCards.NUMBER_OF_CARDS / DeckOfCards.NUMBER_OF_SUITS) - hand.length) / (DeckOfCards.NUMBER_OF_CARDS - hand.length)) * PROBABILITY_MAXIMUM + hand.length);
+				- ((((float) (DeckOfCards.NUMBER_OF_CARDS / DeckOfCards.NUMBER_OF_SUITS) - HAND_SIZE) / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE)) * PROBABILITY_MAXIMUM + HAND_SIZE);
 		// Take into account that we hold 5 of the 13 same suit cards.
 		return Math.round(((probability < PROBABILITY_MINIMUM) ? PROBABILITY_MINIMUM : probability));
 	}
@@ -346,7 +346,7 @@ public class HandOfCards {
 	private int fullHouseImprove(int cardPosition) {
 		final int firstCardGameValue = hand[0].getGameValue();
 		final int middleCardGameValue = hand[2].getGameValue();
-		final int lastCardGameValue = hand[hand.length - 1].getGameValue();
+		final int lastCardGameValue = hand[HAND_SIZE - 1].getGameValue();
 
 		int tripleGameValue = middleCardGameValue;
 		int pairGameValue = (middleCardGameValue == firstCardGameValue) ? lastCardGameValue : firstCardGameValue;
@@ -369,17 +369,17 @@ public class HandOfCards {
 			}
 		}
 
-		float probabilityOfACard = ((float) cardTypeInDeck / (DeckOfCards.NUMBER_OF_CARDS - hand.length));
+		float probabilityOfACard = ((float) cardTypeInDeck / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE));
 		float probabilityByCardGameValue = PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * ((float) (chosenCard.getGameValue() - PlayingCard.GAME_VALUE_OFFSET) / (PlayingCard.ACE_GAME_VALUE - PlayingCard.GAME_VALUE_OFFSET)));
-		return Math.round(((cardTypeInDeck == 0) ? PROBABILITY_MINIMUM : hand.length * probabilityOfACard * probabilityByCardGameValue));
+		return Math.round(((cardTypeInDeck == 0) ? PROBABILITY_MINIMUM : HAND_SIZE * probabilityOfACard * probabilityByCardGameValue));
 	}
 
 	// If highest card is king, this might get upgraded to royal flush, otherwise a higher straight flush.
 	// For both outcomes chance is the same.
 	private int straightFlushImprove(int cardPosition) {
-		float probabilityOfACard = (1f / (DeckOfCards.NUMBER_OF_CARDS - hand.length));
+		float probabilityOfACard = (1f / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE));
 		float probabilityByCardGameValue = PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * ((float) (hand[cardPosition].getGameValue() - PlayingCard.GAME_VALUE_OFFSET) / (PlayingCard.ACE_GAME_VALUE - PlayingCard.GAME_VALUE_OFFSET)));
-		return Math.round(((cardPosition == hand.length - 1) ? (probabilityOfACard * probabilityByCardGameValue) : PROBABILITY_MINIMUM));
+		return Math.round(((cardPosition == HAND_SIZE - 1) ? (probabilityOfACard * probabilityByCardGameValue) : PROBABILITY_MINIMUM));
 	}
 
 	// Returns probability of improving straight if card at cardPosition would be discarded.
@@ -396,11 +396,11 @@ public class HandOfCards {
 				return (int) PROBABILITY_MINIMUM; // CASE A-K-Q-J-10
 			}
 			// CASE When chosen card is not equal to the lowest card.
-			if (lowestCardPosition != hand.length - 1) return (int) PROBABILITY_MINIMUM;
+			if (lowestCardPosition != HAND_SIZE - 1) return (int) PROBABILITY_MINIMUM;
 		}
 
-		// Dont care about the suit so the chance is 4
-		float probabilityOfACard = ((float) DeckOfCards.NUMBER_OF_SUITS / (DeckOfCards.NUMBER_OF_CARDS - hand.length));
+		// Don't care about the suit so the chance is 4
+		float probabilityOfACard = ((float) DeckOfCards.NUMBER_OF_SUITS / (DeckOfCards.NUMBER_OF_CARDS - HAND_SIZE));
 		float probabilityByCardGameValue = PROBABILITY_MAXIMUM - (PROBABILITY_MAXIMUM * ((float) (hand[lowestCardPosition].getGameValue() - PlayingCard.GAME_VALUE_OFFSET) / (PlayingCard.ACE_GAME_VALUE - PlayingCard.GAME_VALUE_OFFSET)));
 		return Math.round(probabilityOfACard * probabilityByCardGameValue);
 	}
@@ -423,14 +423,14 @@ public class HandOfCards {
 	private int getQuadsKicker() {
 		// patternOne = X-X-X-X-Y
 		// patternTwo = Y-X-X-X-X
-		return hand[0].getGameValue() == hand[3].getGameValue() ? hand.length - 1 : 0;
+		return hand[0].getGameValue() == hand[3].getGameValue() ? HAND_SIZE - 1 : 0;
 	}
 
 	// Returns value of a hand so it can be compared to other hand.
 	public int getGameValue() {
 		final int firstCardGameValue = hand[0].getGameValue();
 		final int middleCardGameValue = hand[2].getGameValue();
-		final int lastCardGameValue = hand[hand.length - 1].getGameValue();
+		final int lastCardGameValue = hand[HAND_SIZE - 1].getGameValue();
 
 		// All of the royal flushes are the same so no need to do anything.
 		if (isRoyalFlush()) return ROYAL_FLUSH_DEFAULT;
@@ -515,7 +515,7 @@ public class HandOfCards {
 		if (isOnePair()) {
 			int power = POWER_OF_DEFAULT / 2;
 
-			for (int i = 0; i < hand.length - 1; i++) {
+			for (int i = 0; i < HAND_SIZE - 1; i++) {
 				// Find the pair.
 				if (hand[i].getGameValue() == hand[i + 1].getGameValue()) {
 					// Add six, raise to the power of 6.
@@ -533,8 +533,8 @@ public class HandOfCards {
 		}
 
 		// If execution reaches this point it means the hand is either high hand or a flush.
-		for (int i = 0; i < hand.length; i++) {
-			gameValue += Math.pow(hand[i].getGameValue(), hand.length - i);
+		for (int i = 0; i < HAND_SIZE; i++) {
+			gameValue += Math.pow(hand[i].getGameValue(), HAND_SIZE - i);
 		}
 
 		if (isFlush()) {
@@ -545,13 +545,13 @@ public class HandOfCards {
 	}
 
 	/*
-	 * Sorts hand (array of PlayingCard objects) in descending order. Uses
-	 * insertion sort algorithm.
+	 * Sorts hand (array of PlayingCard objects) in descending order.
+	 * Using insertion sort algorithm.
 	 */
 	private void sort() {
-		for (int i = 0; i < hand.length; i++) {
+		for (int i = 0; i < HAND_SIZE; i++) {
 			PlayingCard card = hand[i];
-			for (int j = i + 1; j < hand.length; j++) {
+			for (int j = i + 1; j < HAND_SIZE; j++) {
 				PlayingCard nextCard = hand[j];
 				if (card.getGameValue() < nextCard.getGameValue()) {
 					hand[i] = nextCard;
@@ -571,7 +571,7 @@ public class HandOfCards {
 	public boolean isRoyalFlush() {
 		PlayingCard firstCard = hand[0];
 		if (firstCard.getType().equals(PlayingCard.ACE)) {
-			for (int i = 0; i < hand.length - 1; i++) {
+			for (int i = 0; i < HAND_SIZE - 1; i++) {
 				// Check if card[i] - card[i + 1] game value is not equal to one
 				// or suits of the cards do not match.
 				// If one of these two conditions are true, then this hand is
@@ -583,8 +583,8 @@ public class HandOfCards {
 			}
 			// Check suit of a last card in a hand.
 			// (Has to be checked here because for loop above goes up to the
-			// hand.length - 1).
-			return firstCard.getSuit() == hand[hand.length - 1].getSuit();
+			// HAND_SIZE - 1).
+			return firstCard.getSuit() == hand[HAND_SIZE - 1].getSuit();
 		}
 		return false;
 	}
@@ -592,7 +592,7 @@ public class HandOfCards {
 	// Returns true or false depending on whether a hand contains straight flush or not.
 	public boolean isStraightFlush() {
 		PlayingCard firstCard = hand[0];
-		for (int i = 0; i < hand.length - 1; i++) {
+		for (int i = 0; i < HAND_SIZE - 1; i++) {
 			// Same thing as in royal flush method, except instead of game value
 			// I used face value
 			// so if the first card is ace this if statement will be true.
@@ -603,7 +603,7 @@ public class HandOfCards {
 				return false;
 			}
 		}
-		return firstCard.getSuit() == hand[hand.length - 1].getSuit();
+		return firstCard.getSuit() == hand[HAND_SIZE - 1].getSuit();
 	}
 
 	// Returns true or false depending on whether a hand contains four of a kind or not.
@@ -643,8 +643,8 @@ public class HandOfCards {
 		patternOne: {
 			if (hand[0].getType().equals(PlayingCard.ACE)) {
 				// If left most card is ace then loop from right side of the hand.
-				for (int i = hand.length - 1; i > 0; i--) {
-					if (((i - hand.length) + hand[i].getFaceValue()) != hand[0].getFaceValue()) {
+				for (int i = HAND_SIZE - 1; i > 0; i--) {
+					if (((i - HAND_SIZE) + hand[i].getFaceValue()) != hand[0].getFaceValue()) {
 						break patternOne;
 					}
 				}
@@ -652,7 +652,7 @@ public class HandOfCards {
 			}
 		}
 
-		for (int i = 1; i < hand.length; i++) {
+		for (int i = 1; i < HAND_SIZE; i++) {
 			if ((hand[0].getGameValue() - i) != hand[i].getGameValue()) {
 				return false;
 			}
@@ -669,7 +669,7 @@ public class HandOfCards {
 
 		char suit = hand[0].getSuit();
 		// Loop through hand of cards and check if card suits match.
-		for (int i = 1; i < hand.length; i++) {
+		for (int i = 1; i < HAND_SIZE; i++) {
 			if (suit != hand[i].getSuit()) {
 				return false;
 			}
@@ -702,7 +702,7 @@ public class HandOfCards {
 	// Returns true or false depending on whether a hand contains one pair or not.
 	public boolean isOnePair() {
 		int count = 0;
-		for (int i = 0; i < hand.length - 1; i++) {
+		for (int i = 0; i < HAND_SIZE - 1; i++) {
 			// Count same type of cards.
 			// If hand contains three of a kind or two pair the count value will
 			// be > 1.
@@ -718,8 +718,6 @@ public class HandOfCards {
 		return !isRoyalFlush() && !isStraightFlush() && !isFourOfAKind() && !isFullHouse() && !isFlush()
 				&& !isStraight() && !isThreeOfAKind() && !isTwoPair() && !isOnePair();
 	}
-
-
 
 	public String toString() {
 		String string = "";
