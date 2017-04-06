@@ -9,35 +9,50 @@
 
 package poker;
 
-public class PokerPlayer {
+public abstract class PokerPlayer {
+	public static final int MAX_CARDS_TO_DISCARD = 3;
+	protected HandOfCards hand;
+	protected String name;
 
-	private static final int MAX_CARDS_TO_DISCARD = 3;
-
-	private HandOfCards hand;
-
-	public PokerPlayer(DeckOfCards deck) {
+	public PokerPlayer(DeckOfCards deck, String mName) {
 		hand = new HandOfCards(deck);
+		name = mName;
 	}
 
-	// Method which discards up to 3 cards from the hand.
-	public int discard() {
-		int counter = 0;
-		for (int i = 0; i < HandOfCards.HAND_SIZE; i++)  {
-			int discardProbability = hand.getDiscardProbability(i);
-			// Generate random number between 1 and 99.
-			int random = (int) (Math.random() * HandOfCards.PROBABILITY_MAXIMUM - 1) + 1;
-			// If generated random number is in the range between 0 and discardProbability, discard the card.
-			if (random <= discardProbability && counter < MAX_CARDS_TO_DISCARD) {
-				hand.replaceCard(i);
-				counter++;
-			}
-		}
-		return counter;
+	// List of abstract methods for subclasses to implement
+	/**
+	 * Discards set of cards from the hand
+	 * 
+	 * @return The number of cards discarded from the hand
+	 */
+	public abstract int discard();
+
+	/**
+	 *
+	 * @return
+	 */
+	public abstract int bet();
+
+	// Getters and setters
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public HandOfCards getHand() {
+		return hand;
 	}
 
 	@Override
+	/**
+	 * String representation of the Player. Consists of players name, hand and
+	 * the gamevalue of the hand.
+	 */
 	public String toString() {
-		return "Poker player's hand: " + hand + ", Game value: " + hand.getGameValue();
+		return "Poker player " + name + "'s" + "hand: " + hand + ", Game value: " + hand.getGameValue();
 	}
 
 }
