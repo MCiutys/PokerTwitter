@@ -2,7 +2,6 @@
  * A class that represents a card that can be played in a poker game.
  * This class stores the card type, suit face and game values.
  *
- * @author Edgaras Lagunovas (15204377)
  */
 
 package poker;

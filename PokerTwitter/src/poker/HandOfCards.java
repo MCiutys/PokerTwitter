@@ -2,7 +2,6 @@
  * A class that represents hand of cards.
  * It contains an instance of a deck and array of size 5 which holds instanced of PlayingCard.
  *
- * @author Edgaras Lagunovas (15204377)
  */
 
 package poker;

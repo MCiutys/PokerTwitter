@@ -5,7 +5,6 @@
  * 
  * Cards are being dealt from last position of the array which would be the top card of the deck.
  *
- * @author Edgaras Lagunovas (15204377)
  */
 
 package poker;

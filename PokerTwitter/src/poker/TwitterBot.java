@@ -23,20 +23,20 @@ public class TwitterBot {
 	private static final String ACCESS_TOKEN_SECRET = "5KQOnxKfq5u6ybXSRk6xYCD8gkCiGjvHGEZ1qbuF0QJ8t";
 
 	public static void main(String[] args) {
-		TwitterBot.getInstance();
+		TwitterBot.getAPI();
 	}
 
 	private TwitterBot() {}
 
-	public static TwitterBot getInstance() {
+	public static Twitter getAPI() {
 		if (twitterBot == null) {
 			twitterBot = new TwitterBot();
-			init();
+			initialize();
 		}
-		return twitterBot;
+		return api;
 	}
 
-	private static void init() {
+	private static void initialize() {
 		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 		configurationBuilder.setDebugEnabled(true)
 		.setOAuthConsumerKey(CONSUMER_KEY)
@@ -44,14 +44,7 @@ public class TwitterBot {
 		.setOAuthAccessToken(ACCESS_TOKEN)
 		.setOAuthAccessTokenSecret(ACCESS_TOKEN_SECRET);
 		api = new TwitterFactory(configurationBuilder.build()).getInstance();
-		
-		// FIXME Code below this line is for testing purposes. TO BE REMOVED.
-		TwitterListener listener = TwitterListener.getInstance();
-		listener.run();
-	}
-
-	public static Twitter getAPI() {
-		return api;
+		TwitterListener.startListening();
 	}
 
 }

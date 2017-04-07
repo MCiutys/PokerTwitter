@@ -1,10 +1,9 @@
 /*
  * A class that represents a poker player that will be used in a poker game.
- * This class contains methods only one method which discards cards from a HandOfCards
+ * This class contains only one method which discards cards from a HandOfCards
  * in hopes to improve it to win the game.
  * Logic is mainly based on randomness unless the probability is either 0 or 100.
  *
- * @author Edgaras Lagunovas (15204377)
  */
 
 package poker;

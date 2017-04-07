@@ -2,7 +2,6 @@ package poker;
 
 public class HumanPokerPlayer extends PokerPlayer {
 	private String twitterHandle;
-	private TwitterBot twitterBot;
 
 	public HumanPokerPlayer(DeckOfCards deck, String mName, String mTwitterHandle) {
 		super(deck, mName);
