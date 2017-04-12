@@ -39,8 +39,20 @@ public class HandOfCards {
 	public HandOfCards(DeckOfCards deck) {
 		this.deck = deck;
 		hand = new PlayingCard[HAND_SIZE];
-		for (int i = 0; i < HAND_SIZE; i++) {
+		/*for (int i = 0; i < HAND_SIZE; i++) {
 			hand[i] = deck.dealNext();
+		}
+		sort();
+		*/
+	}
+	
+	public void addCard(PlayingCard card) {
+		if (card != null) {
+			for (int i = 0; i < HAND_SIZE; i++) {
+				if (hand[i] == null) {
+					hand[i] = card;
+				}
+			}
 		}
 		sort();
 	}

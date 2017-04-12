@@ -44,6 +44,11 @@ public abstract class PokerPlayer {
 	public HandOfCards getHand() {
 		return hand;
 	}
+	
+	// Give a card for a player
+	public void addCard(PlayingCard card) {
+		hand.addCard(card);
+	}
 
 	@Override
 	/**
