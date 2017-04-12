@@ -16,7 +16,7 @@ public class RoundOfPoker {
 
 	// Increase pot by getting player's bet
 	private void increasePot(PokerPlayer player) {
-		pot += player.bet();
+		//pot += player.bet();
 	}
 
 	// Deal one card for a given player
