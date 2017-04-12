@@ -25,9 +25,11 @@ public class AIPokerPlayer extends PokerPlayer {
 	}
 
 	@Override
-	public int bet() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int bet(int callBet) {
+		// For now just return the call
+		int betAmount = (callBet <= funds ? callBet : 0);
+		funds -= betAmount;
+		return betAmount;
 	}
 
 }
