@@ -9,29 +9,37 @@
 package poker;
 
 public abstract class PokerPlayer {
+	// Constants
 	public static final int MAX_CARDS_TO_DISCARD = 3;
 	public static final int STARTING_FUNDS = 1000;
+
+	// Variables
 	protected HandOfCards hand;
 	protected String name;
 	protected int funds;
 
+	// Methods
 	public PokerPlayer(DeckOfCards deck, String mName) {
 		hand = new HandOfCards(deck);
 		name = mName;
-		funds = 1000;
+		funds = STARTING_FUNDS;
 	}
 
 	// List of abstract methods for subclasses to implement
 	/**
-	 * Discards set of cards from the hand
+	 * Discards a set of playing cards from the hand and replaces them with
+	 * another set of playing cards.
 	 * 
-	 * @return The number of cards discarded from the hand
+	 * @return The number of cards discarded from the hand.
 	 */
 	public abstract int discard();
 
 	/**
-	 *
-	 * @return
+	 * Calculates the amount of money the player is going to bet. All return
+	 * values less than or equal to 0 indicate the players wish to fold, else
+	 * the return value will be greater or equal to the callBet.
+	 * 
+	 * @return The amount of money player is going to bet.
 	 */
 	public abstract int bet(int callBet);
 
@@ -43,7 +51,7 @@ public abstract class PokerPlayer {
 	 * @return
 	 */
 	public boolean canStartBetting() {
-		return hand.getGameValue() > 200000000; // HandOfCards.ONE_PAIR_DEFAULT;
+		return hand.getGameValue() >  HandOfCards.ONE_PAIR_DEFAULT;
 	}
 
 	// Getters and setters
@@ -58,7 +66,7 @@ public abstract class PokerPlayer {
 	public HandOfCards getHand() {
 		return hand;
 	}
-	
+
 	// Give a card for a player
 	public void addCard(PlayingCard card) {
 		hand.addCard(card);

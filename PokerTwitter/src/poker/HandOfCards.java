@@ -14,15 +14,15 @@ public class HandOfCards {
 	public static final int RATE_OF_CHANGE = 100000000;
 
 	// Hand values.
-	private static final int ROYAL_FLUSH_DEFAULT = 1000000000; 									// 1000M
-	private static final int STRAIGHT_FLUSH_DEFAULT = ROYAL_FLUSH_DEFAULT - RATE_OF_CHANGE; 	// 900M
-	private static final int FOUR_OF_A_KIND_DEFAULT = STRAIGHT_FLUSH_DEFAULT - RATE_OF_CHANGE; 	// 800M
-	private static final int FULL_HOUSE_DEFAULT = FOUR_OF_A_KIND_DEFAULT - RATE_OF_CHANGE; 		// 700M
-	private static final int FLUSH_DEFAULT = FULL_HOUSE_DEFAULT - RATE_OF_CHANGE; 				// 600M
-	private static final int STRAIGHT_DEFAULT = FLUSH_DEFAULT - RATE_OF_CHANGE; 				// 500M
-	private static final int THREE_OF_A_KIND_DEFAULT = STRAIGHT_DEFAULT - RATE_OF_CHANGE; 		// 400M
-	private static final int TWO_PAIRS_DEFAULT = THREE_OF_A_KIND_DEFAULT - RATE_OF_CHANGE; 		// 300M
-	private static final int ONE_PAIR_DEFAULT = TWO_PAIRS_DEFAULT - RATE_OF_CHANGE; 			// 200M
+	public static final int ROYAL_FLUSH_DEFAULT = 1000000000; 									// 1000M
+	public static final int STRAIGHT_FLUSH_DEFAULT = ROYAL_FLUSH_DEFAULT - RATE_OF_CHANGE; 		// 900M
+	public static final int FOUR_OF_A_KIND_DEFAULT = STRAIGHT_FLUSH_DEFAULT - RATE_OF_CHANGE; 	// 800M
+	public static final int FULL_HOUSE_DEFAULT = FOUR_OF_A_KIND_DEFAULT - RATE_OF_CHANGE; 		// 700M
+	public static final int FLUSH_DEFAULT = FULL_HOUSE_DEFAULT - RATE_OF_CHANGE; 				// 600M
+	public static final int STRAIGHT_DEFAULT = FLUSH_DEFAULT - RATE_OF_CHANGE; 					// 500M
+	public static final int THREE_OF_A_KIND_DEFAULT = STRAIGHT_DEFAULT - RATE_OF_CHANGE; 		// 400M
+	public static final int TWO_PAIRS_DEFAULT = THREE_OF_A_KIND_DEFAULT - RATE_OF_CHANGE; 		// 300M
+	public static final int ONE_PAIR_DEFAULT = TWO_PAIRS_DEFAULT - RATE_OF_CHANGE; 				// 200M
 	private static final int POWER_OF_DEFAULT = 6;
 
 	// Probability min/max.
@@ -31,8 +31,8 @@ public class HandOfCards {
 
 	// MISC.
 	public static final int INVALID_POSITION = -1;
-
 	public static final int HAND_SIZE = 5;
+	
 	private PlayingCard[] hand;
 	private DeckOfCards deck;
 
