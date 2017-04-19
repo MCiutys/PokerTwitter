@@ -14,21 +14,30 @@ public class RoundOfPoker {
 		deck = new DeckOfCards();
 	}
 
-	// Increase pot by getting player's bet
-	private void increasePot(PokerPlayer player) {
-		//pot += player.bet();
-	}
-
-	// Deal one card for a given player
-	private void dealCard(PokerPlayer player) {
-		player.addCard(deck.dealNext());
-	}
-
-	// Play the game
-	public void play() {
+	// Play the round
+	public void playRound() {
+		// Tell how many chips each player has
+		for (int i = 0; i < players.size(); i++) {
+			// printing players.get(i).getFunds();
+		}
 		// Deal cards for players
 		for (int i = 0; i < players.size() * HandOfCards.HAND_SIZE; i++) {
-			dealCard(players.get(i % players.size()));
+			players.get(i % players.size()).addCard(deck.dealNext());
 		}
+		
+		// Discarding cards
+		for (int i = 0; i < players.size(); i++) {
+			players.get(i).discard();
+		}
+		
+		// Ask to fold
+		for (int i = 0; i < players.size(); i++) {
+			// Check if a player wants to fold
+			if (true) {
+				players.remove(i);
+			}
+		}
+		
+		
 	}
 }
