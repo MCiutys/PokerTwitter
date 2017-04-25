@@ -13,6 +13,11 @@ public abstract class PokerPlayer {
 	public static final int MAX_CARDS_TO_DISCARD = 3;
 	public static final int STARTING_FUNDS = 1000;
 
+	// Betting Constants
+	public static final int BET_ERROR = -2;
+	public static final int BET_FOLD = -1;
+	public static final int BET_CHECK = 0;
+
 	// Variables
 	protected HandOfCards hand;
 	protected String name;
@@ -51,7 +56,7 @@ public abstract class PokerPlayer {
 	 * @return
 	 */
 	public boolean canStartBetting() {
-		return hand.getGameValue() >  HandOfCards.ONE_PAIR_DEFAULT;
+		return hand.getGameValue() > HandOfCards.ONE_PAIR_DEFAULT;
 	}
 
 	// Getters and setters
@@ -68,8 +73,8 @@ public abstract class PokerPlayer {
 	}
 
 	// Give a card for a player
-	public void addCard(PlayingCard card) {
-		hand.addCard(card);
+	public boolean addCard(PlayingCard card) {
+		return hand.addCard(card);
 	}
 
 	public int getFunds() {
@@ -82,7 +87,7 @@ public abstract class PokerPlayer {
 	 * the gamevalue of the hand.
 	 */
 	public String toString() {
-		return "Poker player " + name + "'s" + "hand: " + hand + ", Game value: " + hand.getGameValue();
+		return "Poker player " + name + "'s hand: " + hand + ", Game value: " + hand.getGameValue();
 	}
 
 }

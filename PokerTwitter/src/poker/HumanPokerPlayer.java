@@ -3,9 +3,6 @@ package poker;
 public class HumanPokerPlayer extends PokerPlayer {
 	// Constants
 	private static final String INTEGER_REGEX = "\\d+$";
-	private static final int BET_ERROR = -2;
-	private static final int BET_FOLD = -1;
-	private static final int BET_CHECK = 0;
 
 	// Variables
 	private String twitterHandle;

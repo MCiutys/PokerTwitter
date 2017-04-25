@@ -46,15 +46,30 @@ public class HandOfCards {
 		*/
 	}
 	
-	public void addCard(PlayingCard card) {
+	public boolean addCard(PlayingCard card) {
+		boolean anyNull = false, addedCard = false;
+		
+		// Replace the first null card with new card and determine
+		// if any null card are left in the hand.
 		if (card != null) {
-			for (int i = 0; i < HAND_SIZE; i++) {
+			for (int i = 0; i < HAND_SIZE && !anyNull; i++) {
 				if (hand[i] == null) {
-					hand[i] = card;
+					// If its the first null card encountered
+					if (!addedCard) {
+						hand[i] = card;
+						addedCard = true;
+					} else {
+						anyNull = true;
+					}
 				}
 			}
 		}
-		sort();
+		
+		// If there are no null cards in the hand then sort
+		if (!anyNull)
+			sort();
+		
+		return addedCard;
 	}
 
 	// Replaces card at given index.
