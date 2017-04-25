@@ -61,8 +61,6 @@ public class HumanPokerPlayer extends PokerPlayer {
 				betAmount = Integer.valueOf(betStrSplit[0]);
 			else if (betStrSplit[0].equalsIgnoreCase("fold")) {
 				betAmount = BET_FOLD;
-			} else if (betStrSplit[0].equalsIgnoreCase("check")) {
-				betAmount = BET_CHECK;
 			} else if (betStrSplit[0].equalsIgnoreCase("call")) {
 				betAmount = callBet;
 			} else if (betStrSplit[0].equalsIgnoreCase("all")) {
