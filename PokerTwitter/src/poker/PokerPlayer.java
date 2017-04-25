@@ -80,6 +80,10 @@ public abstract class PokerPlayer {
 	public int getFunds() {
 		return funds;
 	}
+	
+	public void addToFunds(int winningPot) {
+		funds += winningPot;
+	}
 
 	@Override
 	/**

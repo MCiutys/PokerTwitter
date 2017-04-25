@@ -28,4 +28,8 @@ public class GameOfPoker {
 		round = new RoundOfPoker(players);
 		return round;
 	}
+	
+	public void playRound() {
+		round.playRound();
+	}
 }
