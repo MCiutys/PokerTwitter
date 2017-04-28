@@ -211,7 +211,8 @@ public class RoundOfPoker {
 			// no one can open, so start new round
 		} else {
 			System.out.println(players.size());
-			createNewRound(players);
+			System.out.println("RESTARTED");
+			playRound();
 		}
 	}
 }
