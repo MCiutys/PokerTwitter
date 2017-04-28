@@ -34,8 +34,6 @@ public class AIPokerPlayer extends PokerPlayer {
 
 		if (doFold(callBet)) {
 			betAmount = BET_FOLD;
-		} else if (doCheck(callBet)) {
-			betAmount = BET_CHECK;
 		} else if (doCall(callBet)) {
 			betAmount = callBet;
 		} else if (doRaise(callBet)) {
@@ -62,17 +60,6 @@ public class AIPokerPlayer extends PokerPlayer {
 	 */
 	private boolean doFold(int callBet) {
 		return funds < callBet || (callBet > MIN_POT_FOLD && hand.getGameValue() < BAD_HAND_VALUE);
-	}
-
-	/**
-	 * Decides whether or not to check given your current hand and the call bet.
-	 * If you don't have a good hand but want to stay in just case;
-	 * 
-	 * @param callBet
-	 * @return True if hand is bad but the call bet is 0.
-	 */
-	private boolean doCheck(int callBet) {
-		return callBet == 0 && hand.getGameValue() < BAD_HAND_VALUE;
 	}
 
 	/**

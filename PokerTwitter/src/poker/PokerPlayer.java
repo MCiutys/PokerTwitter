@@ -16,7 +16,6 @@ public abstract class PokerPlayer {
 	// Betting Constants
 	public static final int BET_ERROR = -2;
 	public static final int BET_FOLD = -1;
-	public static final int BET_CHECK = 0;
 
 	// Variables
 	protected HandOfCards hand;
