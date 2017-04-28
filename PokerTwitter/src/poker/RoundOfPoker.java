@@ -22,7 +22,7 @@ public class RoundOfPoker {
 	private void createNewRound(ArrayList<PokerPlayer> players) {
 		pot = 0;
 		this.players = players;
-//		copyOfPlayers(players);
+		// copyOfPlayers(players);
 		originalPlayers = players;
 		deck = new DeckOfCards();
 		lastBets = new HashMap<PokerPlayer, Integer>();
@@ -142,6 +142,18 @@ public class RoundOfPoker {
 		}
 	}
 
+	// Folding process
+	private int folding(int index, int size) {
+		int indexToReturn = 0;
+		players.remove(index % size);
+		if (index % size == size) {
+			indexToReturn = -1;
+		} else {
+			indexToReturn = (index % size) - 1;
+		}
+		return indexToReturn;
+	}
+
 	// Betting, folding, raising
 	private void betting(int startingPlayer) {
 		int bet = STARTING_BET;
@@ -151,40 +163,27 @@ public class RoundOfPoker {
 			int size = players.size();
 			PokerPlayer player = players.get(i % size);
 			System.out.println("---------------------------------");
-			System.out.println("Index: " + i % players.size());
-			System.out.println("Players to loop through: " + counter);
-			System.out.println("Last bet was " + lastBet);
-			System.out.println("Last bet for " + player.getName() + ": "
-					+ lastBets.get(player));
+			System.out.println("Last bet by any player was " + lastBet);
+			System.out.println("Last bet for " + player.getName() + " was " + lastBets.get(player));
 			// Get the bet from a player
-			System.out.println(player.getName() + " has to add "
-					+ (lastBet - lastBets.get(player)));
+			System.out.println(player.getName() + " has to add " + (lastBet - lastBets.get(player)) + " to the pot");
 			bet = player.bet((lastBet - lastBets.get(player)));
 
 			// if bet is -1, player folded
 			if (bet == PokerPlayer.BET_FOLD) {
 				System.out.println(player.getName() + " has folded");
-				players.remove(i % players.size());
-				System.out.println("i: " + i % players.size());
-				if (i % players.size() == players.size()) {
-					i = -1;
-				} else {
-					i = (i % players.size()) - 1;					
-				}
-				System.out.println("i: " + i);
+				i = folding(i, size);
 				counter--;
 				// otherwise, add bet to the pot
 			} else {
 				pot += bet;
 				System.out.println(player.getName() + " has bet " + bet);
 				counter--;
-				System.out.println("Diff between lastBet and bet: "
-						+ (bet - (lastBet - lastBets.get(player))));
+
 				// if new bet higher than last one, player has raised
 				if (bet > (lastBet - lastBets.get(player))) {
-					System.out.println(player.getName() + " has raised by "
-							+ (bet - (lastBet - lastBets.get(player))));
-					counter = players.size() - 1;
+					System.out.println(player.getName() + " has raised by " + (bet - (lastBet - lastBets.get(player))));
+					counter = size - 1;
 				}
 				bet += lastBets.get(player);
 				lastBet = bet;
@@ -210,8 +209,6 @@ public class RoundOfPoker {
 			showChips();
 			// no one can open, so start new round
 		} else {
-			System.out.println(players.size());
-			System.out.println("RESTARTED");
 			playRound();
 		}
 	}
