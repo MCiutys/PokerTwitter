@@ -4,15 +4,15 @@ import java.util.Scanner;
 
 public class HumanPokerPlayer extends PokerPlayer {
 	// Constants
-	private static final String DISCARD_REGEX = "^[1-5]|^[1-5] [1-5]|^[1-5] [1-5] [1-5]";
-	private static final String BET_REGEX = "^\\w+|^\\w+ \\w+";
+	private static final String DISCARD_REGEX = "^[1-5].*";
+	private static final String BET_REGEX = "^\\w+$|^\\w+ \\w+$";
 	private static final String INTEGER_REGEX = "^\\d+";
 	private static final int MAX_TRIES = 3;
 
 	// Question String
 	private static final String DISCARD_QUESTION = "Please enter the cards you want to discard? ";
 	private static final String BET_QUESTION = "Please enter the your bet? ";
-	private static final String TRY_AGAIN_QUESTION = "\nInvalid input, please try again:";
+	private static final String TRY_AGAIN_QUESTION = "\nInvalid input, please try again? ";
 
 	// Error String
 	private static final String NO_FUNDS_STR = "Not enough funds in your account";
@@ -70,7 +70,6 @@ public class HumanPokerPlayer extends PokerPlayer {
 			// ******************* Get this from twitter bot *******************
 			String betStr = getBetStr(callBet);
 			String[] betStrSplit = betStr.split(" ");
-			System.out.println("*" + betStr + "* : " + betStrSplit.length);
 
 			switch (betStrSplit.length) {
 			case 0:
@@ -142,7 +141,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 		int tries = 1;
 		String disStr = getInput(DISCARD_QUESTION).trim();
 
-		for (; !disStr.isEmpty() && !disStr.matches(BET_REGEX) && tries < MAX_TRIES; tries++) {
+		for (; !disStr.isEmpty() && !disStr.matches(DISCARD_REGEX) && tries < MAX_TRIES; tries++) {
 			disStr = getInput(TRY_AGAIN_QUESTION);
 		}
 
@@ -173,7 +172,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 	// We do NOT close the scanner as it will close System.in forever
 	@SuppressWarnings("resource")
 	private String getInput(String question) {
-		System.out.println(question);
+		System.out.print(question);
 		Scanner s = new Scanner(System.in);
 		String input = s.nextLine();
 		return input;
