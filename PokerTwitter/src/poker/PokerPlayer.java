@@ -78,6 +78,12 @@ public abstract class PokerPlayer {
 		return hand.addCard(deck.dealNext());
 	}
 
+	public void newHand() {
+		hand = new HandOfCards(deck);
+		for (int i = 0; i < HandOfCards.HAND_SIZE; i++)
+			addCard();
+	}
+
 	public int getFunds() {
 		return funds;
 	}

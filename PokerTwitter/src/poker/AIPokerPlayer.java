@@ -4,7 +4,11 @@ public class AIPokerPlayer extends PokerPlayer {
 	private static int BAD_HAND_VALUE = HandOfCards.ONE_PAIR_DEFAULT;
 	private static int GOOD_HAND_VALUE = HandOfCards.TWO_PAIRS_DEFAULT;
 	private static int GREAT_HAND_VALUE = HandOfCards.FOUR_OF_A_KIND_DEFAULT;
-	private static int MIN_POT_FOLD = 50;
+
+	// Variables
+	private static int MAX_RAISE = 2000;
+	private static int MIN_POT_FOLD = 30;
+	private static int MIN_BET = 10;
 
 	/**
 	 * Default constructor of the AIPokerPlayer class. Just set the deck and
@@ -16,7 +20,7 @@ public class AIPokerPlayer extends PokerPlayer {
 	 *            The name of the bot.
 	 */
 	public AIPokerPlayer(DeckOfCards deck, String mName) {
-		this(deck, mName, BAD_HAND_VALUE, GOOD_HAND_VALUE, GREAT_HAND_VALUE, MIN_POT_FOLD);
+		this(deck, mName, BAD_HAND_VALUE, GOOD_HAND_VALUE, GREAT_HAND_VALUE, MIN_POT_FOLD, MIN_BET);
 	}
 
 	/**
@@ -37,7 +41,7 @@ public class AIPokerPlayer extends PokerPlayer {
 	 *            The smallest callBet for which the bot will consider folding.
 	 */
 	public AIPokerPlayer(DeckOfCards deck, String mName, int bad_hand_value, int good_hand_value, int great_hand_value,
-			int min_pot_fold) {
+			int min_pot_fold, int min_bet) {
 		super(deck, mName);
 
 		// BAD_HAND_VALUE options
@@ -55,6 +59,11 @@ public class AIPokerPlayer extends PokerPlayer {
 		// MIN_POT_FOLD options
 		if (MIN_POT_FOLD >= 0) {
 			MIN_POT_FOLD = min_pot_fold;
+		}
+
+		// MIN_BET options
+		if (MIN_BET > 0) {
+			MIN_BET = min_bet;
 		}
 	}
 
@@ -88,7 +97,7 @@ public class AIPokerPlayer extends PokerPlayer {
 		} else if (doRaise(callBet)) {
 			betAmount = raiseBetBy(callBet) + callBet;
 		} else if (doCall(callBet)) {
-			betAmount = callBet;
+			betAmount = (callBet < MIN_BET ? MIN_BET : callBet);
 		}
 
 		funds -= betAmount;
@@ -134,7 +143,7 @@ public class AIPokerPlayer extends PokerPlayer {
 		double howGoodRatio = hand.getGameValue() / HandOfCards.ROYAL_FLUSH_DEFAULT;
 		int raise = (int) (((funds - callBet) / 2) * howGoodRatio);
 
-		return raise;
+		return raise > MAX_RAISE ? MAX_RAISE : raise;
 	}
 
 	/**
