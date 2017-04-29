@@ -103,7 +103,7 @@ public class RoundOfPoker {
 	private void dealCards() {
 		System.out.println("------------------");
 		for (int i = 0; i < players.size() * HandOfCards.HAND_SIZE; i++) {
-			players.get(i % players.size()).addCard(deck.dealNext());
+			players.get(i % players.size()).addCard();
 		}
 
 		// For testing
