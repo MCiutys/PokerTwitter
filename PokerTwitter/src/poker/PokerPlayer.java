@@ -18,12 +18,14 @@ public abstract class PokerPlayer {
 	public static final int BET_FOLD = -1;
 
 	// Variables
+	protected DeckOfCards deck;
 	protected HandOfCards hand;
 	protected String name;
 	protected int funds;
 
 	// Methods
-	public PokerPlayer(DeckOfCards deck, String mName) {
+	public PokerPlayer(DeckOfCards mDeck, String mName) {
+		deck = mDeck;
 		hand = new HandOfCards(deck);
 		name = mName;
 		funds = STARTING_FUNDS;
@@ -72,14 +74,14 @@ public abstract class PokerPlayer {
 	}
 
 	// Give a card for a player
-	public boolean addCard(PlayingCard card) {
-		return hand.addCard(card);
+	public boolean addCard() {
+		return hand.addCard(deck.dealNext());
 	}
 
 	public int getFunds() {
 		return funds;
 	}
-	
+
 	public void addToFunds(int winningPot) {
 		funds += winningPot;
 	}
@@ -90,7 +92,12 @@ public abstract class PokerPlayer {
 	 * the gamevalue of the hand.
 	 */
 	public String toString() {
-		return "Poker player " + name + "'s hand: " + hand + ", Game value: " + hand.getGameValue();
+		try {
+			return "Poker player " + name + "'s hand: " + hand + ", Game value: " + hand.getGameValue();
+		} catch (NullPointerException e) {
+			// Occurs when hand has null cards present
+			return "Poker player " + name;
+		}
 	}
 
 }
