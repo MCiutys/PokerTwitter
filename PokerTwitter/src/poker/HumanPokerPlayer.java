@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class HumanPokerPlayer extends PokerPlayer {
 	// Constants
-	private static final String DISCARD_REGEX = "^[1-5].*";
+	// private static final String DISCARD_REGEX = "";
 	private static final String BET_REGEX = "^\\w+$|^\\w+ \\w+$";
 	private static final String INTEGER_REGEX = "^\\d+";
 	private static final int MAX_TRIES = 3;
@@ -38,7 +38,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 			// If more than 3 card entered, just discard the first 3 cards in
 			// the string and ignore the rest.
 			for (int i = 0; i < MAX_CARDS_TO_DISCARD && i < disStrSplit.length; i++) {
-				if (disStrSplit[i].matches(DISCARD_REGEX)) {
+				if (disStrSplit[i].matches(INTEGER_REGEX)) {
 					// Goes from [1-5] instead of [0-4] so minus 1
 					int disPos = Integer.valueOf(disStrSplit[i]) - 1;
 					hand.replaceCard(disPos);
@@ -128,7 +128,8 @@ public class HumanPokerPlayer extends PokerPlayer {
 			}
 		}
 
-		funds -= betAmount;
+		if (betAmount != BET_FOLD)
+			funds -= betAmount;
 		return betAmount;
 	}
 
@@ -136,13 +137,15 @@ public class HumanPokerPlayer extends PokerPlayer {
 		int tries = 1;
 		String disStr = getInput(DISCARD_QUESTION).trim();
 
-		for (; !disStr.isEmpty() && !disStr.matches(DISCARD_REGEX) && tries < MAX_TRIES; tries++) {
-			disStr = getInput(TRY_AGAIN_QUESTION);
-		}
+		// for (; !disStr.isEmpty() && !disStr.matches(DISCARD_REGEX) && tries <
+		// MAX_TRIES; tries++) {
+		// disStr = getInput(TRY_AGAIN_QUESTION);
+		// }
 
-		if (!disStr.matches(BET_REGEX) && tries == MAX_TRIES) {
-			System.out.println("Max number of tries has been reached, therefore not going to discard any cards.");
-		}
+		// if (!disStr.matches(BET_REGEX) && tries == MAX_TRIES) {
+		// System.out.println("Max number of tries has been reached, therefore
+		// not going to discard any cards.");
+		// }
 
 		return disStr;
 	}
