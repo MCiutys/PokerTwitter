@@ -88,7 +88,7 @@ public class AIPokerPlayer extends PokerPlayer {
 	@Override
 	public int bet(int callBet) {
 		// Default bet if it doesn't enter an if statement
-		int betAmount = (funds > callBet) ? callBet : BET_FOLD;
+		int betAmount = funds > callBet ? callBet : BET_FOLD;
 
 		if (doFold(callBet)) {
 			betAmount = BET_FOLD;
@@ -100,7 +100,14 @@ public class AIPokerPlayer extends PokerPlayer {
 			betAmount = (callBet < MIN_BET ? MIN_BET : callBet);
 		}
 
-		funds -= betAmount;
+		// If the bot wants to bet anyway but doesn't have the funds, go all in
+		if (funds < betAmount)
+			betAmount = funds;
+
+		// Remove the bet amount from the funds if not folding
+		if (betAmount != BET_FOLD)
+			funds -= betAmount;
+
 		return betAmount;
 
 	}
@@ -126,7 +133,7 @@ public class AIPokerPlayer extends PokerPlayer {
 	 * @return
 	 */
 	private boolean doAllIn(int callBet) {
-		return hand.getGameValue() > GREAT_HAND_VALUE && callBet < funds;
+		return hand.getGameValue() > GREAT_HAND_VALUE;
 	}
 
 	/**
