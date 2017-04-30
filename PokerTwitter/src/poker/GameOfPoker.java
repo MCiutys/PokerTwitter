@@ -17,14 +17,17 @@ public class GameOfPoker implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!isWinner()) {
+			round = createNewRound();
 			playRound();
+			resetFolded();
 
 			// print info
 			// reset folded
 			// Mantelio methods
 
 			deckOfCards.reset();
+			
 
 			try {
 				Thread.sleep(100);
@@ -68,6 +71,21 @@ public class GameOfPoker implements Runnable {
 
 	public int getGameId() {
 		return gameId;
+	}
+	
+	public void resetFolded() {
+		for (int i = 0; i < players.size(); i++) {
+			players.get(i).setFolded(false);
+		}
+	}
+	
+	private boolean isWinner() {
+		boolean isWinner = false;
+		if (players.size() == 1) {
+			isWinner = true;
+			System.out.println("PLAYER WHO WON: " + players.get(0).getName());
+		}
+		return isWinner;
 	}
 
 }

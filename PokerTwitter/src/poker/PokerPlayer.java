@@ -22,6 +22,7 @@ public abstract class PokerPlayer {
 	protected HandOfCards hand;
 	protected String name;
 	protected int funds;
+	protected boolean folded;
 
 	// Methods
 	public PokerPlayer(DeckOfCards mDeck, String mName) {
@@ -68,20 +69,28 @@ public abstract class PokerPlayer {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public boolean getFolded() {
+		return folded;
+	}
+	
+	public void setFolded(boolean fold) {
+		folded = fold;
+	}
 
 	public HandOfCards getHand() {
 		return hand;
 	}
 
 	// Give a card for a player
-	public boolean addCard() {
-		return hand.addCard(deck.dealNext());
+	public boolean addCard(PlayingCard card) {
+		return hand.addCard(card);
 	}
 
 	public void newHand() {
 		hand = new HandOfCards(deck);
 		for (int i = 0; i < HandOfCards.HAND_SIZE; i++)
-			addCard();
+			addCard(deck.dealNext());
 	}
 
 	public int getFunds() {

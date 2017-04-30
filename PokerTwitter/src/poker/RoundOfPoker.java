@@ -42,6 +42,7 @@ public class RoundOfPoker {
 
 	// Finding out who has won the round
 	private void findWinner() {
+		System.out.println("------------------");
 		ArrayList<PokerPlayer> winners = new ArrayList<PokerPlayer>();
 
 		winners.add(players.get(0));
@@ -64,6 +65,7 @@ public class RoundOfPoker {
 		}
 
 		// For testing
+		System.out.println("---------------------");
 		System.out.println("Winners: ");
 		for (int i = 0; i < winners.size(); i++) {
 			System.out.println(winners.get(i).getName() + " ");
@@ -73,6 +75,7 @@ public class RoundOfPoker {
 
 	// Split the pot
 	private void splitPot(ArrayList<PokerPlayer> winners) {
+		System.out.println("------------------");
 		for (int i = 0; i < winners.size(); i++) {
 			int winningPot = pot / winners.size();
 			winners.get(i).addToFunds(winningPot);
@@ -90,6 +93,7 @@ public class RoundOfPoker {
 
 	// Showing amount of chips each player has
 	private void showChips() {
+		System.out.println("------------------");
 		for (int i = 0; i < players.size(); i++) {
 			System.out.println(players.get(i).getName() + " has " + players.get(i).getFunds());
 		}
@@ -97,8 +101,9 @@ public class RoundOfPoker {
 
 	// Dealing cards for players
 	private void dealCards() {
+		System.out.println("------------------");
 		for (int i = 0; i < players.size() * HandOfCards.HAND_SIZE; i++) {
-			players.get(i % players.size()).addCard();
+			players.get(i % players.size()).addCard(deck.dealNext());
 		}
 
 		// For testing
@@ -110,6 +115,7 @@ public class RoundOfPoker {
 
 	// Looking for someone who can open
 	private int openingPlayer() {
+		System.out.println("------------------");
 		int openingPlayer = -1;
 		int min = players.size();
 
@@ -130,6 +136,7 @@ public class RoundOfPoker {
 
 	// Discarding cards
 	private void discardCards() {
+		System.out.println("------------------");
 		for (int i = 0; i < players.size(); i++) {
 			System.out.println(players.get(i).getName() + " discarded " + players.get(i).discard());
 		}
@@ -138,7 +145,8 @@ public class RoundOfPoker {
 	// Folding process
 	private int folding(int index, int size) {
 		int indexToReturn = 0;
-		players.remove(index % size);
+//		players.remove(index % size);
+//		players.get(index % size).setFolded();
 		if (index % size == size) {
 			indexToReturn = -1;
 		} else {
@@ -155,6 +163,10 @@ public class RoundOfPoker {
 		for (int i = startingPlayer; counter != 0; i++) {
 			int size = players.size();
 			PokerPlayer player = players.get(i % size);
+			if (player.getFolded()) {
+				System.out.println("SKIP PLAYER");
+				continue;
+			}
 			System.out.println("---------------------------------");
 			System.out.println("Last bet by any player was " + lastBet);
 			System.out.println("Last bet for " + player.getName() + " was " + lastBets.get(player));
@@ -165,7 +177,8 @@ public class RoundOfPoker {
 			// if bet is -1, player folded
 			if (bet == PokerPlayer.BET_FOLD) {
 				System.out.println(player.getName() + " has folded");
-				i = folding(i, size);
+				//i = folding(i, size);
+				players.get(i % size).setFolded(true);
 				counter--;
 				// otherwise, add bet to the pot
 			} else {
@@ -182,6 +195,8 @@ public class RoundOfPoker {
 				lastBet = bet;
 				lastBets.put(player, bet);
 				System.out.println("Next has to bet in total: " + bet);
+				System.out.println("Counter " + counter);
+				System.out.println("Show pot: " + pot);
 			}
 		}
 	}
