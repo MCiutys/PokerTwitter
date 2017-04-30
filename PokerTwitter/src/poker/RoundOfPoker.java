@@ -42,7 +42,6 @@ public class RoundOfPoker {
 
 	// Finding out who has won the round
 	private void findWinner() {
-		System.out.println("------------------");
 		ArrayList<PokerPlayer> winners = new ArrayList<PokerPlayer>();
 
 		winners.add(players.get(0));
@@ -65,7 +64,6 @@ public class RoundOfPoker {
 		}
 
 		// For testing
-		System.out.println("---------------------");
 		System.out.println("Winners: ");
 		for (int i = 0; i < winners.size(); i++) {
 			System.out.println(winners.get(i).getName() + " ");
@@ -75,7 +73,6 @@ public class RoundOfPoker {
 
 	// Split the pot
 	private void splitPot(ArrayList<PokerPlayer> winners) {
-		System.out.println("------------------");
 		for (int i = 0; i < winners.size(); i++) {
 			int winningPot = pot / winners.size();
 			winners.get(i).addToFunds(winningPot);
@@ -93,7 +90,6 @@ public class RoundOfPoker {
 
 	// Showing amount of chips each player has
 	private void showChips() {
-		System.out.println("------------------");
 		for (int i = 0; i < players.size(); i++) {
 			System.out.println(players.get(i).getName() + " has " + players.get(i).getFunds());
 		}
@@ -101,7 +97,6 @@ public class RoundOfPoker {
 
 	// Dealing cards for players
 	private void dealCards() {
-		System.out.println("------------------");
 		for (int i = 0; i < players.size() * HandOfCards.HAND_SIZE; i++) {
 			players.get(i % players.size()).addCard();
 		}
@@ -115,7 +110,6 @@ public class RoundOfPoker {
 
 	// Looking for someone who can open
 	private int openingPlayer() {
-		System.out.println("------------------");
 		int openingPlayer = -1;
 		int min = players.size();
 
@@ -136,7 +130,6 @@ public class RoundOfPoker {
 
 	// Discarding cards
 	private void discardCards() {
-		System.out.println("------------------");
 		for (int i = 0; i < players.size(); i++) {
 			System.out.println(players.get(i).getName() + " discarded " + players.get(i).discard());
 		}

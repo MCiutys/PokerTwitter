@@ -22,10 +22,6 @@ public class TwitterBot {
 	private static final String ACCESS_TOKEN = "849543733473406978-S6By79P4eWW9kjQPTvoFrlNZPSRRyNv";
 	private static final String ACCESS_TOKEN_SECRET = "5KQOnxKfq5u6ybXSRk6xYCD8gkCiGjvHGEZ1qbuF0QJ8t";
 
-	public static void main(String[] args) {
-		TwitterBot.getAPI();
-	}
-
 	private TwitterBot() {}
 
 	public static Twitter getAPI() {

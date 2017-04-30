@@ -142,7 +142,6 @@ public class AIPokerPlayer extends PokerPlayer {
 	private int raiseBetBy(int callBet) {
 		double howGoodRatio = hand.getGameValue() / HandOfCards.ROYAL_FLUSH_DEFAULT;
 		int raise = (int) (((funds - callBet) / 2) * howGoodRatio);
-
 		return raise > MAX_RAISE ? MAX_RAISE : raise;
 	}
 

@@ -19,11 +19,11 @@ public class HumanPokerPlayer extends PokerPlayer {
 	private static final String LESS_THAN_CALLBET_STR = "Bet amount is less than the call bet";
 
 	// Variables
-	private String twitterHandle;
+	private long userId;
 
-	public HumanPokerPlayer(DeckOfCards deck, String mName, String mTwitterHandle) {
+	public HumanPokerPlayer(DeckOfCards deck, String mName, long userId) {
 		super(deck, mName);
-		twitterHandle = mTwitterHandle;
+		this.userId = userId;
 	}
 
 	@Override
@@ -130,11 +130,6 @@ public class HumanPokerPlayer extends PokerPlayer {
 
 		funds -= betAmount;
 		return betAmount;
-	}
-
-	// Getters and Setters
-	public String getTwitterHandle() {
-		return twitterHandle;
 	}
 
 	private String getDisStr() {

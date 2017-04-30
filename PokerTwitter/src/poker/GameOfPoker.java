@@ -3,17 +3,50 @@ package poker;
 
 import java.util.ArrayList;
 
-public class GameOfPoker {
+public class GameOfPoker implements Runnable {
 	private ArrayList<PokerPlayer> players;
 	private RoundOfPoker round;
+	private int gameId;
+	private DeckOfCards deckOfCards;
 
-	public GameOfPoker() {
+	public GameOfPoker(int gameId) {
 		players = new ArrayList<PokerPlayer>();
 		round = createNewRound();
+		deckOfCards = new DeckOfCards();
 	}
 
-	public void addPlayer(PokerPlayer player) {
-		players.add(player);
+	@Override
+	public void run() {
+		while (true) {
+			playRound();
+
+			// print info
+			// reset folded
+			// Mantelio methods
+
+			deckOfCards.reset();
+
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void addPlayer(String name) {
+		addPlayer(name, 0);
+	}
+
+	// If userId == 0 then the player is bot.
+	public void addPlayer(String name, long userId) {
+		PokerPlayer pokerPlayer;
+		if (userId == 0) {
+			pokerPlayer = new AIPokerPlayer(deckOfCards, name);
+		} else {
+			pokerPlayer = new HumanPokerPlayer(deckOfCards, name, userId);
+		}
+		players.add(pokerPlayer);
 	}
 
 	public PokerPlayer removePlayer(PokerPlayer player) {
@@ -28,8 +61,13 @@ public class GameOfPoker {
 		round = new RoundOfPoker(players);
 		return round;
 	}
-	
+
 	public void playRound() {
 		round.playRound();
 	}
+
+	public int getGameId() {
+		return gameId;
+	}
+
 }
