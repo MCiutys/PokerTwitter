@@ -69,12 +69,14 @@ public class RoundOfPoker {
 		System.out.println("---------------------");
 		System.out.println("Winners: ");
 		String tweetWinners = "";
+		String winnerHands = "";
 		for (int i = 0; i < winners.size(); i++) {
-			String winnerName = winners.get(i).getName();
-			System.out.println(winnerName + " ");
-			tweetWinners += winnerName + " ";
+			PokerPlayer winner = winners.get(i);
+			System.out.println(winner.getName() + " ");
+			tweetWinners += winner.getName() + ", ";
+			winnerHands += winner.getHand().toString() + Constants.NEW_LINE;
 		}
-		tweetAllHumanPlayers(tweetWinners);
+		tweetAllHumanPlayers(tweetWinners + Constants.WINNER + Constants.NEW_LINE + "Hand(s): " + winnerHands);
 		splitPot(winners);
 	}
 
@@ -110,17 +112,15 @@ public class RoundOfPoker {
 	}	
 
 	// Displaying cards of every player
+	// Cannot tweet this because of the 140 character limit.
 	private void displayCards() {
-		String tweetCards = "Player cards: " + Constants.NEW_LINE;
 		for (int i = 0; i < players.size(); i++) {
 			PokerPlayer pokerPlayer = players.get(i);
 			String name = pokerPlayer.getName();
 			String hand = pokerPlayer.getHand().toString();
 			System.out.println(name + " had the following hand: ");
 			System.out.println(hand);
-			tweetCards += name + " - " + hand + Constants.NEW_LINE;
 		}
-		tweetAllHumanPlayers(tweetCards);
 	}
 
 	// Showing amount of chips each player has
@@ -149,7 +149,7 @@ public class RoundOfPoker {
 			tagHumanPlayers += "@" + humanPokerPlayer.getName() + " ";
 		}
 
-		TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + message + Constants.NEW_LINE + tagHumanPlayers);
+		TwitterBot.updateStatus(message + Constants.NEW_LINE + tagHumanPlayers);
 	}
 
 	// Dealing cards for players
@@ -249,18 +249,18 @@ public class RoundOfPoker {
 			} else {
 				pot += bet;
 				splitPots.put(player, splitPots.get(player) + bet);
-				tweetAllHumanPlayers(player.getName() + " has bet " + bet);
+				tweetAllHumanPlayers(player.getName() + " has bet " + bet + ".");
 				counter--;
 
 				// if new bet higher than last one, player has raised
 				if (bet > (lastBet - lastBets.get(player))) {
-					tweetAllHumanPlayers(player.getName() + " has raised by " + (bet - (lastBet - lastBets.get(player))));
+					tweetAllHumanPlayers(player.getName() + " has raised by " + (bet - (lastBet - lastBets.get(player))) + ".");
 					counter = size - 1;
 				}
 				bet += lastBets.get(player);
 				lastBet = bet;
 				lastBets.put(player, bet);
-				tweetAllHumanPlayers("Current pot: " + pot);
+				tweetAllHumanPlayers("Current pot: " + pot + ".");
 			}
 		}
 	}

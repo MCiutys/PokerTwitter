@@ -17,10 +17,10 @@ public class TwitterBot {
 	private static Twitter api;
 
 	// Authentication constants
-	private static final String CONSUMER_KEY = "Ic58qS202Bx1FI49ldgPjxo0C";
-	private static final String CONSUMER_SECRET = "iYliAn5FMWnhRkjkTpDQbihsLABETO3PcngFbVMAtZbRurxJf5";
-	private static final String ACCESS_TOKEN = "849543733473406978-E67tu69fyczCmqEwQmUXZzG3qbEGG3i";
-	private static final String ACCESS_TOKEN_SECRET = "mUPz8pdcEh6xIPsFwRr3yuA1cSJ0PvnFnjnAcQz0T0ufn";
+	private static final String CONSUMER_KEY = "5q3jlhwnsmWwP3rctM0tIxgjk";
+	private static final String CONSUMER_SECRET = "luZ51FkM6GerCGrwEAFwE7pm44PwM1vxApf1zSyh2aSGg1VkjX";
+	private static final String ACCESS_TOKEN = "849543733473406978-mmNt3AumvZ0m5mbnoTcJ7X7YqvaPQRE";
+	private static final String ACCESS_TOKEN_SECRET = "GMYuAHiEoFeDP9BWeoqiMbDH8zEummDD0JYKu58jCj2x1";
 
 	private TwitterBot() {}
 
@@ -32,22 +32,35 @@ public class TwitterBot {
 		return api;
 	}
 	
-	private static int randomThreeDigitNumber() {
-		return Constants.RANDOM.nextInt((900) + 100);
+	// This method generates four digit random number hence the name.
+	// That number is then appended to the message to avoid getting the "similar message" error.
+	private static int randomFourDigitNumber() {
+		return Constants.RANDOM.nextInt((9000) + 1000);
+	}
+	
+	private static void sleep() {
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	// Try & Catch
+	// These two methods were created in order to limit requests so we don't get the rate limit error.
+	// Also to catch TwitterException.
 	public static void directMessage(long userId, String text) {
+		sleep();
 		try {
-			TwitterBot.getAPI().sendDirectMessage(userId, text + Constants.NEW_LINE + "[" + randomThreeDigitNumber() + "]");
+			TwitterBot.getAPI().sendDirectMessage(userId, text + Constants.NEW_LINE + "[" + randomFourDigitNumber() + "]");
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void updateStatus(String status) {
+		sleep();
 		try {
-			TwitterBot.getAPI().updateStatus(status + Constants.NEW_LINE + "[" + randomThreeDigitNumber() + "]");
+			TwitterBot.getAPI().updateStatus(status + Constants.NEW_LINE + "[" + randomFourDigitNumber() + "]");
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}

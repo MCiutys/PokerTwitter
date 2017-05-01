@@ -24,10 +24,6 @@ public class PokerManager {
 		pokerGames = new ArrayList<GameOfPoker>();
 	}
 
-	private boolean isNumber(String input) {
-		return input.matches(Constants.NATURAL_NUMBER_REGEX);
-	}
-
 	public boolean processInput(User user, String input) {
 		System.out.println("Input received!\nFrom: " + user.getName() + ", ID: " + user.getId() + "\nInput: " + input);
 		String[] in = input.split(" ");
@@ -58,7 +54,7 @@ public class PokerManager {
 			}
 		} break;
 		case Constants.COMMAND_JOIN: {
-			if (isNumber(in[2])) {
+			if (in[2].matches(Constants.INTEGER_REGEX)) {
 				int gameId = Integer.parseInt(in[2]);
 				findPokerGame(gameId).addPlayer(user);
 				TwitterBot.directMessage(user.getId(), Constants.JOINED_ROOM + Constants.NEW_LINE + Constants.YOUR_TWEET + input);

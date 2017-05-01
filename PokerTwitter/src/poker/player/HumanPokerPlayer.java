@@ -37,8 +37,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 	public int discard() {
 		int disCount = 0;
 
-		TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE +
-				Constants.DISCARD_QUESTION + Constants.NEW_LINE + Constants.NEW_LINE + "@" + name);
+		TwitterBot.updateStatus(Constants.DISCARD_QUESTION + Constants.NEW_LINE + Constants.NEW_LINE + "@" + name);
 
 		String[] discardInput;
 
@@ -51,7 +50,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 				// If more than 3 card entered, just discard the first 3 cards in
 				// the string and ignore the rest.
 				for (int i = 2; i - 2 < MAX_CARDS_TO_DISCARD && i < discardInput.length; i++) {
-					if (discardInput[i].matches(Constants.NATURAL_NUMBER_REGEX)) {
+					if (discardInput[i].matches(Constants.INTEGER_REGEX)) {
 						// Goes from [1-5] instead of [0-4] so minus 1
 						int disPos = Integer.valueOf(discardInput[i]) - 1;
 						hand.replaceCard(disPos);
@@ -67,7 +66,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 	public int bet(int callBet) {
 		// If player can't call the bet, auto fold
 		if (funds < callBet) {
-			TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + "You are unable to call the current bet of " + callBet
+			TwitterBot.updateStatus("You are unable to call the current bet of " + callBet
 					+ ", which means you have to fold this round!" + Constants.NEW_LINE + "@" + name);
 			return BET_FOLD;
 		}
@@ -82,7 +81,7 @@ public class HumanPokerPlayer extends PokerPlayer {
 			 */
 			validBet = true;
 
-			TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + Constants.BET_QUESTION + Constants.NEW_LINE + "@" + name);
+			TwitterBot.updateStatus(Constants.BET_QUESTION + Constants.NEW_LINE + "@" + name);
 
 			waitForInput();
 
@@ -109,13 +108,13 @@ public class HumanPokerPlayer extends PokerPlayer {
 				}
 				break;
 			case 3:
-				if (input[1].equalsIgnoreCase("bet") && ((input[2].matches(Constants.NATURAL_NUMBER_REGEX)) || input[2].equalsIgnoreCase("all"))) {
+				if (input[1].equalsIgnoreCase("bet") && ((input[2].matches(Constants.INTEGER_REGEX)) || input[2].equalsIgnoreCase("all"))) {
 					if (input[2].equalsIgnoreCase("all")) {
 						betAmount = funds;
 					} else {
 						betAmount = Integer.valueOf(input[2]);
 					}
-				} else if (input[1].equalsIgnoreCase("raise") && (input[1].matches(Constants.NATURAL_NUMBER_REGEX))) {
+				} else if (input[1].equalsIgnoreCase("raise") && (input[1].matches(Constants.INTEGER_REGEX))) {
 					betAmount = callBet + Integer.valueOf(input[1]);
 				} else {
 					validBet = false;

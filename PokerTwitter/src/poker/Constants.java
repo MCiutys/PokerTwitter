@@ -5,15 +5,16 @@ import java.util.Random;
 public class Constants {
 
 	public static final int MAX_PLAYERS = 6;
-	public static final String NATURAL_NUMBER_REGEX = "//^\\d+$//";
+	public static final String INTEGER_REGEX = "^\\d+";
 	public static final int THREAD_SLEEP_TIME = 100;
+	public static final int REQUEST_DELAY = 20000; // In milliseconds
 
 	// Misc.
 	public static final String HASH_TAG = "#ECMXPoker";
 	public static final String NEW_LINE = "\n";
 
 	// Game messages/questions
-	public static final String WINNER = " have won the game! Game ID: ";
+	public static final String WINNER = "has won the game!";
 	public static final String HAND_DEALT = "You have been dealt a hand: ";
 	public static final String DISCARD_QUESTION = "Please enter the cards you want to discard? ";
 	public static final String BET_QUESTION = "Please enter the your bet? ";
