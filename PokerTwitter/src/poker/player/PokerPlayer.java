@@ -6,7 +6,11 @@
  *
  */
 
-package poker;
+package poker.player;
+
+import poker.DeckOfCards;
+import poker.HandOfCards;
+import poker.PlayingCard;
 
 public abstract class PokerPlayer {
 	// Constants

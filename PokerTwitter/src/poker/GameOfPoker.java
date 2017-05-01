@@ -2,7 +2,11 @@
 package poker;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import poker.player.AIPokerPlayer;
+import poker.player.HumanPokerPlayer;
+import poker.player.PokerPlayer;
 import twitter4j.User;
 
 public class GameOfPoker implements Runnable {
@@ -10,31 +14,49 @@ public class GameOfPoker implements Runnable {
 	private RoundOfPoker round;
 	private int gameId;
 	private DeckOfCards deckOfCards;
+	private volatile boolean started;
 
 	public GameOfPoker(int gameId) {
 		players = new ArrayList<PokerPlayer>();
 		round = createNewRound();
 		deckOfCards = new DeckOfCards();
+		started = false;
 	}
 
 	@Override
 	public void run() {
+		// Wait till started.
+		while (!started) {
+			try {
+				Thread.sleep(Constants.THREAD_SLEEP_TIME);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		while (!isWinner()) {
 			round = createNewRound();
-			playRound();
+			round.playRound();
 			resetFolded();
 			cleanHandsForPlayers();
 			deckOfCards.reset();
-
-
 			try {
-				Thread.sleep(100);
+				Thread.sleep(Constants.THREAD_SLEEP_TIME);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
+	public boolean startGame() {
+		if (!started) {
+			started = !started;
+			return started;
+		}
+		return false;
+	}
+
+	// AI Player
 	public void addPlayer(String name) {
 		players.add(new AIPokerPlayer(deckOfCards, name));
 	}
@@ -52,20 +74,23 @@ public class GameOfPoker implements Runnable {
 		return players;
 	}
 
-	public HumanPokerPlayer findPlayer(long userId) {
+	public List<HumanPokerPlayer> getHumanPlayers() {
+		List<HumanPokerPlayer> humanPokerPlayers = new ArrayList<HumanPokerPlayer>();
 		for (PokerPlayer pokerPlayer : players) {
 			if (pokerPlayer instanceof HumanPokerPlayer) {
-				HumanPokerPlayer humanPokerPlayer = (HumanPokerPlayer) pokerPlayer;
-				if (humanPokerPlayer.getUser().getId() == userId) {
-					return humanPokerPlayer;
-				}
+				humanPokerPlayers.add((HumanPokerPlayer) pokerPlayer);
+			}
+		}
+		return humanPokerPlayers;
+	}
+
+	public HumanPokerPlayer getPlayer(long userId) {
+		for (HumanPokerPlayer humanPokerPlayer : getHumanPlayers()) {
+			if (humanPokerPlayer.getUser().getId() == userId) {
+				return humanPokerPlayer;
 			}
 		}
 		return null;
-	}
-
-	public void playRound() {
-		round.playRound();
 	}
 
 	public RoundOfPoker createNewRound() {

@@ -1,4 +1,7 @@
-package poker;
+package poker.player;
+
+import poker.DeckOfCards;
+import poker.HandOfCards;
 
 public class AIPokerPlayer extends PokerPlayer {
 	private static int BAD_HAND_VALUE = HandOfCards.ONE_PAIR_DEFAULT;

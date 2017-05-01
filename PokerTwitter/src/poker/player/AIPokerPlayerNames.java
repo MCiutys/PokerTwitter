@@ -1,4 +1,4 @@
-package poker;
+package poker.player;
 
 import java.io.BufferedReader;
 import java.io.File;

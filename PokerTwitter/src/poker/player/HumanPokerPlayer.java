@@ -1,8 +1,10 @@
-package poker;
+package poker.player;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
+import poker.Constants;
+import poker.DeckOfCards;
 import twitter4j.User;
 
 public class HumanPokerPlayer extends PokerPlayer {
@@ -17,16 +19,12 @@ public class HumanPokerPlayer extends PokerPlayer {
 	private static final String BET_QUESTION = "Please enter the your bet? ";
 	private static final String TRY_AGAIN_QUESTION = "\nInvalid input, please try again? ";
 
-	// Error String
-	private static final String NO_FUNDS_STR = "Not enough funds in your account";
-	private static final String LESS_THAN_CALLBET_STR = "Bet amount is less than the call bet";
-
 	// Variables
 	private User user;
 	private Queue<String[]> inputQueue;
 
 	public HumanPokerPlayer(DeckOfCards deck, User user) {
-		super(deck, user.getName());
+		super(deck, user.getScreenName());
 		this.user = user;
 		inputQueue = new LinkedList<String[]>();
 	}
@@ -51,23 +49,27 @@ public class HumanPokerPlayer extends PokerPlayer {
 
 		System.out.println(DISCARD_QUESTION);
 
-		waitForInput();
+		String[] discardInput;
 
-		String[] discardInput = inputQueue.remove();
+		while (true) {
+			waitForInput();
 
-		if (discardInput[1].equals("discard")) {
-			// If more than 3 card entered, just discard the first 3 cards in
-			// the string and ignore the rest.
-			for (int i = 2; i < MAX_CARDS_TO_DISCARD && i < discardInput.length; i++) {
-				if (discardInput[i].matches(INTEGER_REGEX)) {
-					// Goes from [1-5] instead of [0-4] so minus 1
-					int disPos = Integer.valueOf(discardInput[i]) - 1;
-					hand.replaceCard(disPos);
-					disCount++;
+			discardInput = inputQueue.remove();
+
+			if (discardInput[1].equals("discard")) {
+				// If more than 3 card entered, just discard the first 3 cards in
+				// the string and ignore the rest.
+				for (int i = 2; i - 2 < MAX_CARDS_TO_DISCARD && i < discardInput.length; i++) {
+					if (discardInput[i].matches(INTEGER_REGEX)) {
+						// Goes from [1-5] instead of [0-4] so minus 1
+						int disPos = Integer.valueOf(discardInput[i]) - 1;
+						hand.replaceCard(disPos);
+						disCount++;
+					}
 				}
 			}
+			return disCount;
 		}
-		return disCount;
 	}
 
 	@Override
@@ -94,9 +96,9 @@ public class HumanPokerPlayer extends PokerPlayer {
 			waitForInput();
 
 			// ******************* Get this from twitter bot *******************
-			String[] betStrSplit = inputQueue.remove();
+			String[] input = inputQueue.remove();
 
-			switch (betStrSplit.length) {
+			switch (input.length) {
 			case 0:
 			case 1:
 				if (funds > callBet) {
@@ -108,23 +110,23 @@ public class HumanPokerPlayer extends PokerPlayer {
 				}
 				break;
 			case 2:
-				if (betStrSplit[1].equalsIgnoreCase("fold")) {
+				if (input[1].equalsIgnoreCase("fold")) {
 					betAmount = BET_FOLD;
-				} else if (betStrSplit[1].equalsIgnoreCase("call")) {
+				} else if (input[1].equalsIgnoreCase("call")) {
 					betAmount = callBet;
 				} else {
 					validBet = false;
 				}
 				break;
 			case 3:
-				if (betStrSplit[1].equalsIgnoreCase("bet") && ((betStrSplit[2].matches(INTEGER_REGEX)) || betStrSplit[2].equalsIgnoreCase("all"))) {
-					if (betStrSplit[2].equalsIgnoreCase("all")) {
+				if (input[1].equalsIgnoreCase("bet") && ((input[2].matches(INTEGER_REGEX)) || input[2].equalsIgnoreCase("all"))) {
+					if (input[2].equalsIgnoreCase("all")) {
 						betAmount = funds;
 					} else {
-						betAmount = Integer.valueOf(betStrSplit[2]);
+						betAmount = Integer.valueOf(input[2]);
 					}
-				} else if (betStrSplit[1].equalsIgnoreCase("raise") && (betStrSplit[1].matches(INTEGER_REGEX))) {
-					betAmount = callBet + Integer.valueOf(betStrSplit[1]);
+				} else if (input[1].equalsIgnoreCase("raise") && (input[1].matches(INTEGER_REGEX))) {
+					betAmount = callBet + Integer.valueOf(input[1]);
 				} else {
 					validBet = false;
 				}
@@ -144,10 +146,10 @@ public class HumanPokerPlayer extends PokerPlayer {
 
 				if (!lsEqFunds) {
 					// Don't have enough funds in your account; error message
-					System.out.println(NO_FUNDS_STR);
+					System.out.println(Constants.NO_FUNDS);
 				} else if (!grEqCallBet) {
 					// Bet amount is less than the call bet; error message
-					System.out.println(LESS_THAN_CALLBET_STR);
+					System.out.println(Constants.LESS_THAN_CALLBET);
 				}
 			}
 		}

@@ -2,6 +2,12 @@ package poker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import poker.player.HumanPokerPlayer;
+import poker.player.PokerPlayer;
+import poker.twitter.TwitterBot;
+import twitter4j.TwitterException;
 
 public class RoundOfPoker {
 
@@ -10,8 +16,7 @@ public class RoundOfPoker {
 	private int pot;
 	private ArrayList<PokerPlayer> players;
 	private DeckOfCards deck;
-	private HashMap<PokerPlayer, Integer> lastBets; // storing last bets of
-	// every player
+	private HashMap<PokerPlayer, Integer> lastBets; // storing last bets of every player
 	private HashMap<PokerPlayer, Integer> splitPots;
 
 	public RoundOfPoker(ArrayList<PokerPlayer> players, DeckOfCards deck) {
@@ -31,7 +36,7 @@ public class RoundOfPoker {
 			lastBets.put(players.get(i), 0);
 		}
 	}
-	
+
 	private void createHashmapForPot(ArrayList<PokerPlayer> players) {
 		for (int i = 0; i < players.size(); i++) {
 			splitPots.put(players.get(i), 0);
@@ -71,16 +76,6 @@ public class RoundOfPoker {
 		splitPot(winners);
 	}
 
-//	// Split the pot
-//	private void splitPot(ArrayList<PokerPlayer> winners) {
-//		System.out.println("------------------");
-//		for (int i = 0; i < winners.size(); i++) {
-//			int winningPot = pot / winners.size();
-//			winners.get(i).addToFunds(winningPot);
-//			System.out.println(winners.get(i).getName() + " wins " + winningPot);
-//		}
-//	}
-	
 	// Split the pot
 	private void splitPot(ArrayList<PokerPlayer> winners) {
 		System.out.println("------------------");
@@ -111,7 +106,6 @@ public class RoundOfPoker {
 			System.exit(0);
 		}
 	}	
-	
 
 	// Displaying cards of every player
 	private void displayCards() {
@@ -124,8 +118,33 @@ public class RoundOfPoker {
 	// Showing amount of chips each player has
 	private void showChips() {
 		System.out.println("------------------");
+		String chipsUpdate = "";
 		for (int i = 0; i < players.size(); i++) {
-			System.out.println(players.get(i).getName() + " has " + players.get(i).getFunds());
+			chipsUpdate += players.get(i).getName() + " has " + players.get(i).getFunds() + " chips.\n";
+		}
+		tweetAllHumanPlayers(chipsUpdate);
+	}
+
+	private List<HumanPokerPlayer> getHumanPlayers() {
+		List<HumanPokerPlayer> humanPokerPlayers = new ArrayList<HumanPokerPlayer>();
+		for (PokerPlayer pokerPlayer : players) {
+			if (pokerPlayer instanceof HumanPokerPlayer) {
+				humanPokerPlayers.add((HumanPokerPlayer) pokerPlayer);
+			}
+		}
+		return humanPokerPlayers;
+	}
+
+	private void tweetAllHumanPlayers(String message) {
+		String tagHumanPlayers = "";
+		for (HumanPokerPlayer humanPokerPlayer : getHumanPlayers()) {
+			tagHumanPlayers += "@" + humanPokerPlayer.getName() + " ";
+		}
+
+		try {
+			TwitterBot.getAPI().updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + message + Constants.NEW_LINE + tagHumanPlayers);
+		} catch (TwitterException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -171,7 +190,7 @@ public class RoundOfPoker {
 			System.out.println(players.get(i).getName() + " discarded " + players.get(i).discard());
 		}
 	}
-	
+
 	private void removePlayers() {
 		for (int i = 0; i < players.size(); i++) {
 			PokerPlayer player = players.get(i);

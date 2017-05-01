@@ -3,8 +3,9 @@
  * 
  */
 
-package poker;
+package poker.twitter;
 
+import poker.Constants;
 import twitter4j.FilterQuery;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -20,7 +21,7 @@ public class TwitterListener {
 		TwitterStreamFactory twitterStreamFactory = new TwitterStreamFactory(TwitterBot.getAPI().getConfiguration());
 		twitterStream = twitterStreamFactory.getInstance();
 		twitterStream.addListener(new CustomStatusListener());
-		twitterStream.filter(new FilterQuery(TwitterBot.HASH_TAG));
+		twitterStream.filter(new FilterQuery(Constants.HASH_TAG));
 	}
 
 	public static boolean startListening() {
