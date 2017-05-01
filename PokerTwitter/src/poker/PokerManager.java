@@ -124,7 +124,13 @@ public class PokerManager {
 		thread.start();
 		return gameOfPoker;
 	}
-
+	
+	
+	// Deletes ended games.
+	public static void deleteGame(int gameId) {
+		pokerManager.pokerGames.remove(pokerManager.findPokerGame(gameId));
+	}
+	
 	public static PokerManager getInstance() {
 		if (pokerManager == null) {
 			pokerManager = new PokerManager();

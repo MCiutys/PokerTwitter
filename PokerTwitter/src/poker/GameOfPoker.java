@@ -116,6 +116,7 @@ public class GameOfPoker implements Runnable {
 			isWinner = true;
 			PokerPlayer pokerPlayer = players.get(0);
 			TwitterBot.updateStatus(pokerPlayer.getName() + Constants.WINNER + Constants.NEW_LINE + "@" + pokerPlayer.getName());
+			PokerManager.deleteGame(gameId);
 		}
 		return isWinner;
 	}
