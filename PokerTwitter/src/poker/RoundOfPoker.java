@@ -280,7 +280,6 @@ public class RoundOfPoker {
 			betting(openingPlayer);
 			findWinner();
 			displayCards();
-			showChips();
 			removePlayers();
 			// no one can open, so start new round
 		} else {
