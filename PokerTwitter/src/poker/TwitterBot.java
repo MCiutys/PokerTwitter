@@ -17,10 +17,10 @@ public class TwitterBot {
 	public static final String HASH_TAG = "#ECMXPoker";
 
 	// Authentication constants
-	private static final String CONSUMER_KEY = "n2oGby0hRj9lnqyKI3G3hhibb";
-	private static final String CONSUMER_SECRET = "5p5yxly0OtxQUUrrWFmNyNdXdmlzBXBUC8aQc3PnGOhddSX2Jd";
-	private static final String ACCESS_TOKEN = "849543733473406978-S6By79P4eWW9kjQPTvoFrlNZPSRRyNv";
-	private static final String ACCESS_TOKEN_SECRET = "5KQOnxKfq5u6ybXSRk6xYCD8gkCiGjvHGEZ1qbuF0QJ8t";
+	private static final String CONSUMER_KEY = "Ic58qS202Bx1FI49ldgPjxo0C";
+	private static final String CONSUMER_SECRET = "iYliAn5FMWnhRkjkTpDQbihsLABETO3PcngFbVMAtZbRurxJf5";
+	private static final String ACCESS_TOKEN = "849543733473406978-E67tu69fyczCmqEwQmUXZzG3qbEGG3i";
+	private static final String ACCESS_TOKEN_SECRET = "mUPz8pdcEh6xIPsFwRr3yuA1cSJ0PvnFnjnAcQz0T0ufn";
 
 	private TwitterBot() {}
 

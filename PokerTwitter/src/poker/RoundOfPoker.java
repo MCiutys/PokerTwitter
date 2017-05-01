@@ -10,33 +10,31 @@ public class RoundOfPoker {
 	private int pot;
 	private ArrayList<PokerPlayer> players;
 	private DeckOfCards deck;
-	private ArrayList<PokerPlayer> originalPlayers; // just in case round has to
-	// be restarted
 	private HashMap<PokerPlayer, Integer> lastBets; // storing last bets of
 	// every player
+	private HashMap<PokerPlayer, Integer> splitPots;
 
-	public RoundOfPoker(ArrayList<PokerPlayer> players) {
-		createNewRound(players);
+	public RoundOfPoker(ArrayList<PokerPlayer> players, DeckOfCards deck) {
+		createNewRound(players, deck);
 	}
 
-	private void createNewRound(ArrayList<PokerPlayer> players) {
+	private void createNewRound(ArrayList<PokerPlayer> players, DeckOfCards deck) {
 		pot = 0;
 		this.players = players;
-		// copyOfPlayers(players);
-		originalPlayers = players;
-		deck = new DeckOfCards();
 		lastBets = new HashMap<PokerPlayer, Integer>();
+		splitPots = new HashMap<PokerPlayer, Integer>();
+		this.deck = deck;
 	}
 
-	private void createHashmap(ArrayList<PokerPlayer> players) {
+	private void createHashmapForBets(ArrayList<PokerPlayer> players) {
 		for (int i = 0; i < players.size(); i++) {
 			lastBets.put(players.get(i), 0);
 		}
 	}
-
-	private void copyOfPlayers(ArrayList<PokerPlayer> players) {
+	
+	private void createHashmapForPot(ArrayList<PokerPlayer> players) {
 		for (int i = 0; i < players.size(); i++) {
-			originalPlayers.add(players.get(i));
+			splitPots.put(players.get(i), 0);
 		}
 	}
 
@@ -73,15 +71,47 @@ public class RoundOfPoker {
 		splitPot(winners);
 	}
 
+//	// Split the pot
+//	private void splitPot(ArrayList<PokerPlayer> winners) {
+//		System.out.println("------------------");
+//		for (int i = 0; i < winners.size(); i++) {
+//			int winningPot = pot / winners.size();
+//			winners.get(i).addToFunds(winningPot);
+//			System.out.println(winners.get(i).getName() + " wins " + winningPot);
+//		}
+//	}
+	
 	// Split the pot
 	private void splitPot(ArrayList<PokerPlayer> winners) {
 		System.out.println("------------------");
+		boolean takeFromOthers = false;
+		int amountToTake = 0;
 		for (int i = 0; i < winners.size(); i++) {
-			int winningPot = pot / winners.size();
-			winners.get(i).addToFunds(winningPot);
-			System.out.println(winners.get(i).getName() + " wins " + winningPot);
+			PokerPlayer winner = winners.get(i);
+			int requiredPart = pot / winners.size();
+			System.out.println("Required part: " + requiredPart);
+			System.out.println("Winners part: " + splitPots.get(winner));
+			System.out.println("Winners size: " + winners.size());
+			if (splitPots.get(winner) >= requiredPart || winners.size() == 1) {
+				winner.addToFunds(pot);
+				System.out.println("Equal parts");
+			} else {
+				winner.addToFunds(splitPots.get(winner) * winners.size());
+				pot -= splitPots.get(winner) * winners.size();
+				takeFromOthers = true;
+				amountToTake = splitPots.get(winner);
+				System.out.println("Unequal parts");
+			}
 		}
-	}
+		if (takeFromOthers) {
+			for (int i = 0; i < winners.size(); i++) {
+				PokerPlayer winner = winners.get(i);
+				winner.addToFunds(splitPots.get(winner) - amountToTake);
+			}
+			System.exit(0);
+		}
+	}	
+	
 
 	// Displaying cards of every player
 	private void displayCards() {
@@ -141,18 +171,14 @@ public class RoundOfPoker {
 			System.out.println(players.get(i).getName() + " discarded " + players.get(i).discard());
 		}
 	}
-
-	// Folding process
-	private int folding(int index, int size) {
-		int indexToReturn = 0;
-//		players.remove(index % size);
-//		players.get(index % size).setFolded();
-		if (index % size == size) {
-			indexToReturn = -1;
-		} else {
-			indexToReturn = (index % size) - 1;
+	
+	private void removePlayers() {
+		for (int i = 0; i < players.size(); i++) {
+			PokerPlayer player = players.get(i);
+			if (player.getFunds() == 0) {
+				players.remove(player);
+			}
 		}
-		return indexToReturn;
 	}
 
 	// Betting, folding, raising
@@ -183,6 +209,7 @@ public class RoundOfPoker {
 				// otherwise, add bet to the pot
 			} else {
 				pot += bet;
+				splitPots.put(player, splitPots.get(player) + bet);
 				System.out.println(player.getName() + " has bet " + bet);
 				counter--;
 
@@ -203,7 +230,8 @@ public class RoundOfPoker {
 
 	// Play the round
 	public void playRound() {
-		createHashmap(players);
+		createHashmapForBets(players);
+		createHashmapForPot(players);
 		showChips();
 		dealCards();
 		int openingPlayer = openingPlayer();
@@ -215,9 +243,8 @@ public class RoundOfPoker {
 			findWinner();
 			displayCards();
 			showChips();
+			removePlayers();
 			// no one can open, so start new round
-		} else {
-			playRound();
-		}
+		} 
 	}
 }

@@ -11,7 +11,7 @@ package poker;
 public abstract class PokerPlayer {
 	// Constants
 	public static final int MAX_CARDS_TO_DISCARD = 3;
-	public static final int STARTING_FUNDS = 1000;
+	public static final int STARTING_FUNDS = 100;
 
 	// Betting Constants
 	public static final int BET_ERROR = -2;
@@ -69,11 +69,11 @@ public abstract class PokerPlayer {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public boolean getFolded() {
 		return folded;
 	}
-	
+
 	public void setFolded(boolean fold) {
 		folded = fold;
 	}
@@ -91,6 +91,10 @@ public abstract class PokerPlayer {
 		hand = new HandOfCards(deck);
 		for (int i = 0; i < HandOfCards.HAND_SIZE; i++)
 			addCard(deck.dealNext());
+	}
+
+	public void cleanHand() {
+		hand.cleanHand();
 	}
 
 	public int getFunds() {

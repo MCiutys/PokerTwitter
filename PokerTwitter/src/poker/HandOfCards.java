@@ -32,7 +32,7 @@ public class HandOfCards {
 	// MISC.
 	public static final int INVALID_POSITION = -1;
 	public static final int HAND_SIZE = 5;
-	
+
 	private PlayingCard[] hand;
 	private DeckOfCards deck;
 
@@ -43,12 +43,12 @@ public class HandOfCards {
 			hand[i] = deck.dealNext();
 		}
 		sort();
-		*/
+		 */
 	}
-	
+
 	public boolean addCard(PlayingCard card) {
 		boolean anyNull = false, addedCard = false;
-		
+
 		// Replace the first null card with new card and determine
 		// if any null card are left in the hand.
 		if (card != null) {
@@ -64,12 +64,18 @@ public class HandOfCards {
 				}
 			}
 		}
-		
+
 		// If there are no null cards in the hand then sort
 		if (!anyNull)
 			sort();
-		
+
 		return addedCard;
+	}
+
+	public void cleanHand() {
+		for (int i = 0; i < HAND_SIZE; i++) {
+			hand[i] = null;
+		}
 	}
 
 	// Replaces card at given index.

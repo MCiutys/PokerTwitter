@@ -1,6 +1,9 @@
 package poker;
 
-import java.util.Scanner;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import twitter4j.User;
 
 public class HumanPokerPlayer extends PokerPlayer {
 	// Constants
@@ -19,28 +22,46 @@ public class HumanPokerPlayer extends PokerPlayer {
 	private static final String LESS_THAN_CALLBET_STR = "Bet amount is less than the call bet";
 
 	// Variables
-	private long userId;
+	private User user;
+	private Queue<String[]> inputQueue;
 
-	public HumanPokerPlayer(DeckOfCards deck, String mName, long userId) {
-		super(deck, mName);
-		this.userId = userId;
+	public HumanPokerPlayer(DeckOfCards deck, User user) {
+		super(deck, user.getName());
+		this.user = user;
+		inputQueue = new LinkedList<String[]>();
+	}
+
+	public void insertInput(String[] input) {
+		inputQueue.add(input);
+	}
+
+	private void waitForInput() {
+		while (inputQueue.isEmpty()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public int discard() {
 		int disCount = 0;
-		// ******************* Get this from twitter bot *******************
-		String disStr = getDisStr();
 
-		if (!disStr.isEmpty()) {
-			String[] disStrSplit = disStr.split(" ");
+		System.out.println(DISCARD_QUESTION);
 
+		waitForInput();
+
+		String[] discardInput = inputQueue.remove();
+
+		if (discardInput[1].equals("discard")) {
 			// If more than 3 card entered, just discard the first 3 cards in
 			// the string and ignore the rest.
-			for (int i = 0; i < MAX_CARDS_TO_DISCARD && i < disStrSplit.length; i++) {
-				if (disStrSplit[i].matches(INTEGER_REGEX)) {
+			for (int i = 2; i < MAX_CARDS_TO_DISCARD && i < discardInput.length; i++) {
+				if (discardInput[i].matches(INTEGER_REGEX)) {
 					// Goes from [1-5] instead of [0-4] so minus 1
-					int disPos = Integer.valueOf(disStrSplit[i]) - 1;
+					int disPos = Integer.valueOf(discardInput[i]) - 1;
 					hand.replaceCard(disPos);
 					disCount++;
 				}
@@ -67,12 +88,17 @@ public class HumanPokerPlayer extends PokerPlayer {
 			 * 'call', 'bet 100', 'raise 100', 'all'.
 			 */
 			validBet = true;
+
+			System.out.println(BET_QUESTION);
+
+			waitForInput();
+
 			// ******************* Get this from twitter bot *******************
-			String betStr = getBetStr(callBet);
-			String[] betStrSplit = betStr.split(" ");
+			String[] betStrSplit = inputQueue.remove();
 
 			switch (betStrSplit.length) {
 			case 0:
+			case 1:
 				if (funds > callBet) {
 					System.out.println("Failed to produce valid bet, so we are going to call for you.");
 					betAmount = callBet;
@@ -81,26 +107,24 @@ public class HumanPokerPlayer extends PokerPlayer {
 					betAmount = BET_FOLD;
 				}
 				break;
-			case 1:
-				if ((betStrSplit[0].matches(INTEGER_REGEX)))
-					betAmount = Integer.valueOf(betStrSplit[0]);
-				else if (betStrSplit[0].equalsIgnoreCase("fold")) {
+			case 2:
+				if (betStrSplit[1].equalsIgnoreCase("fold")) {
 					betAmount = BET_FOLD;
-				} else if (betStrSplit[0].equalsIgnoreCase("call")) {
+				} else if (betStrSplit[1].equalsIgnoreCase("call")) {
 					betAmount = callBet;
-				} else if (betStrSplit[0].equalsIgnoreCase("all")) {
-					betAmount = funds;
 				} else {
 					validBet = false;
 				}
 				break;
-			case 2:
-				if (betStrSplit[0].equalsIgnoreCase("bet") && (betStrSplit[1].matches(INTEGER_REGEX))) {
-					betAmount = Integer.valueOf(betStrSplit[1]);
-				} else if (betStrSplit[0].equalsIgnoreCase("raise") && (betStrSplit[1].matches(INTEGER_REGEX))) {
+			case 3:
+				if (betStrSplit[1].equalsIgnoreCase("bet") && ((betStrSplit[2].matches(INTEGER_REGEX)) || betStrSplit[2].equalsIgnoreCase("all"))) {
+					if (betStrSplit[2].equalsIgnoreCase("all")) {
+						betAmount = funds;
+					} else {
+						betAmount = Integer.valueOf(betStrSplit[2]);
+					}
+				} else if (betStrSplit[1].equalsIgnoreCase("raise") && (betStrSplit[1].matches(INTEGER_REGEX))) {
 					betAmount = callBet + Integer.valueOf(betStrSplit[1]);
-				} else if (betStrSplit[0].equalsIgnoreCase("all") && betStrSplit[1].equalsIgnoreCase("in")) {
-					betAmount = funds;
 				} else {
 					validBet = false;
 				}
@@ -133,25 +157,9 @@ public class HumanPokerPlayer extends PokerPlayer {
 		return betAmount;
 	}
 
-	private String getDisStr() {
+	/*private String getBetStr(int callBet) {
 		int tries = 1;
-		String disStr = getInput(DISCARD_QUESTION).trim();
-
-		// for (; !disStr.isEmpty() && !disStr.matches(DISCARD_REGEX) && tries <
-		// MAX_TRIES; tries++) {
-		// disStr = getInput(TRY_AGAIN_QUESTION);
-		// }
-
-		// if (!disStr.matches(BET_REGEX) && tries == MAX_TRIES) {
-		// System.out.println("Max number of tries has been reached, therefore
-		// not going to discard any cards.");
-		// }
-
-		return disStr;
-	}
-
-	private String getBetStr(int callBet) {
-		int tries = 1;
+		System.out.println(BET_QUESTION);
 		String betStr = getInput(BET_QUESTION).trim();
 
 		for (; !betStr.matches(BET_REGEX) && tries < MAX_TRIES; tries++) {
@@ -164,15 +172,10 @@ public class HumanPokerPlayer extends PokerPlayer {
 		}
 
 		return betStr;
+	}*/
+
+	public User getUser() {
+		return user;
 	}
 
-	// TEMPORARY FUNCTION
-	// We do NOT close the scanner as it will close System.in forever
-	@SuppressWarnings("resource")
-	private String getInput(String question) {
-		System.out.print(question);
-		Scanner s = new Scanner(System.in);
-		String input = s.nextLine();
-		return input;
-	}
 }

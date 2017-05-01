@@ -3,6 +3,8 @@ package poker;
 
 import java.util.ArrayList;
 
+import twitter4j.User;
+
 public class GameOfPoker implements Runnable {
 	private ArrayList<PokerPlayer> players;
 	private RoundOfPoker round;
@@ -21,13 +23,9 @@ public class GameOfPoker implements Runnable {
 			round = createNewRound();
 			playRound();
 			resetFolded();
-
-			// print info
-			// reset folded
-			// Mantelio methods
-
+			cleanHandsForPlayers();
 			deckOfCards.reset();
-			
+
 
 			try {
 				Thread.sleep(100);
@@ -38,18 +36,12 @@ public class GameOfPoker implements Runnable {
 	}
 
 	public void addPlayer(String name) {
-		addPlayer(name, 0);
+		players.add(new AIPokerPlayer(deckOfCards, name));
 	}
 
-	// If userId == 0 then the player is bot.
-	public void addPlayer(String name, long userId) {
-		PokerPlayer pokerPlayer;
-		if (userId == 0) {
-			pokerPlayer = new AIPokerPlayer(deckOfCards, name);
-		} else {
-			pokerPlayer = new HumanPokerPlayer(deckOfCards, name, userId);
-		}
-		players.add(pokerPlayer);
+	// Human player
+	public void addPlayer(User user) {
+		players.add(new HumanPokerPlayer(deckOfCards, user));
 	}
 
 	public PokerPlayer removePlayer(PokerPlayer player) {
@@ -60,32 +52,51 @@ public class GameOfPoker implements Runnable {
 		return players;
 	}
 
-	public RoundOfPoker createNewRound() {
-		round = new RoundOfPoker(players);
-		return round;
+	public HumanPokerPlayer findPlayer(long userId) {
+		for (PokerPlayer pokerPlayer : players) {
+			if (pokerPlayer instanceof HumanPokerPlayer) {
+				HumanPokerPlayer humanPokerPlayer = (HumanPokerPlayer) pokerPlayer;
+				if (humanPokerPlayer.getUser().getId() == userId) {
+					return humanPokerPlayer;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void playRound() {
 		round.playRound();
 	}
 
+	public RoundOfPoker createNewRound() {
+		round = new RoundOfPoker(players, deckOfCards);
+		return round;
+	}
+
 	public int getGameId() {
 		return gameId;
 	}
-	
+
 	public void resetFolded() {
 		for (int i = 0; i < players.size(); i++) {
 			players.get(i).setFolded(false);
 		}
 	}
-	
+
 	private boolean isWinner() {
 		boolean isWinner = false;
+		System.out.println("Amount of players: " + players.size());
 		if (players.size() == 1) {
 			isWinner = true;
 			System.out.println("PLAYER WHO WON: " + players.get(0).getName());
 		}
 		return isWinner;
+	}
+
+	private void cleanHandsForPlayers() {
+		for (int i = 0; i < players.size(); i++) {
+			players.get(i).cleanHand();
+		}
 	}
 
 }

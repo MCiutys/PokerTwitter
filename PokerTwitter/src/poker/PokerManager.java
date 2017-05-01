@@ -5,8 +5,8 @@
 
 package poker;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.User;
 
@@ -14,11 +14,11 @@ public class PokerManager {
 
 	private static PokerManager pokerManager;
 	private static int gameCounter;
-	private Map<Thread, GameOfPoker> pokerGames;
+	private List<GameOfPoker> pokerGames;
 
 	private PokerManager() {
 		gameCounter = 0;
-		pokerGames = new HashMap<Thread, GameOfPoker>();
+		pokerGames = new ArrayList<GameOfPoker>();
 	}
 
 	public boolean processInput(User user, String input) {
@@ -29,11 +29,30 @@ public class PokerManager {
 		case "play":
 			createNewGame(user);
 			break;
+		case "bet":
+		case "fold":
+		case "raise":
+		case "discard":
+			HumanPokerPlayer humanPokerPlayer = findPlayer(user.getId());
+			if (humanPokerPlayer != null) {
+				humanPokerPlayer.insertInput(in);
+			}
+			break;
 		default:
 			System.err.println("INVALID COMMAND");
 		}
 
 		return true;
+	}
+	
+	private HumanPokerPlayer findPlayer(long userId) {
+		for (GameOfPoker gameOfPoker : pokerGames) {
+			HumanPokerPlayer humanPokerPlayer = gameOfPoker.findPlayer(userId);
+			if (humanPokerPlayer != null) {
+				return humanPokerPlayer;
+			}
+		}
+		return null;
 	}
 
 	private void createNewGame(User user) {
@@ -44,12 +63,12 @@ public class PokerManager {
 
 		GameOfPoker gameOfPoker = new GameOfPoker(gameCounter);
 		Thread thread = new Thread(gameOfPoker);
-		pokerGames.put(thread, gameOfPoker);
+		pokerGames.add(gameOfPoker);
 
 		gameOfPoker.addPlayer("Vadim");
 		gameOfPoker.addPlayer("Maxim");
 		gameOfPoker.addPlayer("Pavel");
-		gameOfPoker.addPlayer(user.getName(), user.getId());
+		gameOfPoker.addPlayer(user);
 
 		//
 		//
