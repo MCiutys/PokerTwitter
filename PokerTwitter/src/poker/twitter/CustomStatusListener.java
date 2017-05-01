@@ -10,7 +10,6 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
-import twitter4j.TwitterException;
 
 public class CustomStatusListener implements StatusListener{
 
@@ -36,11 +35,7 @@ public class CustomStatusListener implements StatusListener{
 
 	@Override
 	public void onStatus(Status status) {
-		try {
-			PokerManager.getInstance().processInput(status.getUser(), status.getText());
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
+		PokerManager.getInstance().processInput(status.getUser(), status.getText());
 	}
 
 	@Override

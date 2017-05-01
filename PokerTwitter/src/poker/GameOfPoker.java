@@ -7,6 +7,7 @@ import java.util.List;
 import poker.player.AIPokerPlayer;
 import poker.player.HumanPokerPlayer;
 import poker.player.PokerPlayer;
+import poker.twitter.TwitterBot;
 import twitter4j.User;
 
 public class GameOfPoker implements Runnable {
@@ -113,7 +114,8 @@ public class GameOfPoker implements Runnable {
 		System.out.println("Amount of players: " + players.size());
 		if (players.size() == 1) {
 			isWinner = true;
-			System.out.println("PLAYER WHO WON: " + players.get(0).getName());
+			PokerPlayer pokerPlayer = players.get(0);
+			TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + pokerPlayer.getName() + Constants.WINNER + Constants.NEW_LINE + "@" + pokerPlayer.getName());
 		}
 		return isWinner;
 	}

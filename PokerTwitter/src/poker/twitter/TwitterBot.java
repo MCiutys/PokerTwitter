@@ -5,7 +5,9 @@
 
 package poker.twitter;
 
+import poker.Constants;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -21,13 +23,34 @@ public class TwitterBot {
 	private static final String ACCESS_TOKEN_SECRET = "mUPz8pdcEh6xIPsFwRr3yuA1cSJ0PvnFnjnAcQz0T0ufn";
 
 	private TwitterBot() {}
-	
+
 	public static Twitter getAPI() {
 		if (twitterBot == null) {
 			twitterBot = new TwitterBot();
 			initialize();
 		}
 		return api;
+	}
+	
+	private static int randomThreeDigitNumber() {
+		return Constants.RANDOM.nextInt((900) + 100);
+	}
+
+	// Try & Catch
+	public static void directMessage(long userId, String text) {
+		try {
+			TwitterBot.getAPI().sendDirectMessage(userId, text + Constants.NEW_LINE + "[" + randomThreeDigitNumber() + "]");
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateStatus(String status) {
+		try {
+			TwitterBot.getAPI().updateStatus(status + Constants.NEW_LINE + "[" + randomThreeDigitNumber() + "]");
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void initialize() {

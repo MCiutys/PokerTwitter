@@ -7,7 +7,6 @@ import java.util.List;
 import poker.player.HumanPokerPlayer;
 import poker.player.PokerPlayer;
 import poker.twitter.TwitterBot;
-import twitter4j.TwitterException;
 
 public class RoundOfPoker {
 
@@ -67,12 +66,15 @@ public class RoundOfPoker {
 			}
 		}
 
-		// For testing
 		System.out.println("---------------------");
 		System.out.println("Winners: ");
+		String tweetWinners = "";
 		for (int i = 0; i < winners.size(); i++) {
-			System.out.println(winners.get(i).getName() + " ");
+			String winnerName = winners.get(i).getName();
+			System.out.println(winnerName + " ");
+			tweetWinners += winnerName + " ";
 		}
+		tweetAllHumanPlayers(tweetWinners);
 		splitPot(winners);
 	}
 
@@ -109,18 +111,24 @@ public class RoundOfPoker {
 
 	// Displaying cards of every player
 	private void displayCards() {
+		String tweetCards = "Player cards: " + Constants.NEW_LINE;
 		for (int i = 0; i < players.size(); i++) {
-			System.out.println(players.get(i).getName() + " had the following hand: ");
-			System.out.println(players.get(i).getHand());
+			PokerPlayer pokerPlayer = players.get(i);
+			String name = pokerPlayer.getName();
+			String hand = pokerPlayer.getHand().toString();
+			System.out.println(name + " had the following hand: ");
+			System.out.println(hand);
+			tweetCards += name + " - " + hand + Constants.NEW_LINE;
 		}
+		tweetAllHumanPlayers(tweetCards);
 	}
 
 	// Showing amount of chips each player has
 	private void showChips() {
 		System.out.println("------------------");
-		String chipsUpdate = "";
+		String chipsUpdate = "Chips: " + Constants.NEW_LINE;
 		for (int i = 0; i < players.size(); i++) {
-			chipsUpdate += players.get(i).getName() + " has " + players.get(i).getFunds() + " chips.\n";
+			chipsUpdate += players.get(i).getName() + " - " + players.get(i).getFunds() + Constants.NEW_LINE;
 		}
 		tweetAllHumanPlayers(chipsUpdate);
 	}
@@ -141,11 +149,7 @@ public class RoundOfPoker {
 			tagHumanPlayers += "@" + humanPokerPlayer.getName() + " ";
 		}
 
-		try {
-			TwitterBot.getAPI().updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + message + Constants.NEW_LINE + tagHumanPlayers);
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
+		TwitterBot.updateStatus(Constants.HASH_TAG + Constants.NEW_LINE + message + Constants.NEW_LINE + tagHumanPlayers);
 	}
 
 	// Dealing cards for players
@@ -155,10 +159,11 @@ public class RoundOfPoker {
 			players.get(i % players.size()).addCard(deck.dealNext());
 		}
 
-		// For testing
-		for (int i = 0; i < players.size(); i++) {
-			System.out.println(players.get(i).getName() + " has: ");
-			System.out.println(players.get(i).getHand());
+		for (PokerPlayer pokerPlayer : players) {
+			if (pokerPlayer instanceof HumanPokerPlayer) {
+				HumanPokerPlayer humanPokerPlayer = (HumanPokerPlayer) pokerPlayer;
+				TwitterBot.directMessage(humanPokerPlayer.getUser().getId(), Constants.HAND_DEALT + Constants.NEW_LINE + humanPokerPlayer.getHand());
+			}
 		}
 	}
 
@@ -187,16 +192,31 @@ public class RoundOfPoker {
 	private void discardCards() {
 		System.out.println("------------------");
 		for (int i = 0; i < players.size(); i++) {
-			System.out.println(players.get(i).getName() + " discarded " + players.get(i).discard());
+			PokerPlayer pokerPlayer = players.get(i);
+			int discardedCards = pokerPlayer.discard();
+			System.out.println(pokerPlayer.getName() + " discarded " + discardedCards);
+			if (pokerPlayer instanceof HumanPokerPlayer) {
+				HumanPokerPlayer humanPokerPlayer = (HumanPokerPlayer) pokerPlayer;
+				TwitterBot.directMessage(humanPokerPlayer.getUser().getId(),
+						Constants.DISCARDED_COUNT + discardedCards + "card(s)." + Constants.NEW_LINE + Constants.CURRENT_HAND + humanPokerPlayer.getHand());
+			}
 		}
 	}
 
 	private void removePlayers() {
+		String tweetRemovedPlayers = "Players that lost all their chips and have been removed from the game: " + Constants.NEW_LINE;
+		boolean removed = false;
 		for (int i = 0; i < players.size(); i++) {
 			PokerPlayer player = players.get(i);
 			if (player.getFunds() == 0) {
 				players.remove(player);
+				tweetRemovedPlayers += player.getName() + Constants.NEW_LINE;
+				if (!removed) removed = !removed;
 			}
+		}
+
+		if (removed) {
+			tweetAllHumanPlayers(tweetRemovedPlayers);
 		}
 	}
 
@@ -216,12 +236,12 @@ public class RoundOfPoker {
 			System.out.println("Last bet by any player was " + lastBet);
 			System.out.println("Last bet for " + player.getName() + " was " + lastBets.get(player));
 			// Get the bet from a player
-			System.out.println(player.getName() + " has to add " + (lastBet - lastBets.get(player)) + " to the pot");
+			tweetAllHumanPlayers(player.getName() + " has to add " + (lastBet - lastBets.get(player)) + " to the pot.");
 			bet = player.bet((lastBet - lastBets.get(player)));
 
 			// if bet is -1, player folded
 			if (bet == PokerPlayer.BET_FOLD) {
-				System.out.println(player.getName() + " has folded");
+				tweetAllHumanPlayers(player.getName() + " has folded.");
 				//i = folding(i, size);
 				players.get(i % size).setFolded(true);
 				counter--;
@@ -229,20 +249,18 @@ public class RoundOfPoker {
 			} else {
 				pot += bet;
 				splitPots.put(player, splitPots.get(player) + bet);
-				System.out.println(player.getName() + " has bet " + bet);
+				tweetAllHumanPlayers(player.getName() + " has bet " + bet);
 				counter--;
 
 				// if new bet higher than last one, player has raised
 				if (bet > (lastBet - lastBets.get(player))) {
-					System.out.println(player.getName() + " has raised by " + (bet - (lastBet - lastBets.get(player))));
+					tweetAllHumanPlayers(player.getName() + " has raised by " + (bet - (lastBet - lastBets.get(player))));
 					counter = size - 1;
 				}
 				bet += lastBets.get(player);
 				lastBet = bet;
 				lastBets.put(player, bet);
-				System.out.println("Next has to bet in total: " + bet);
-				System.out.println("Counter " + counter);
-				System.out.println("Show pot: " + pot);
+				tweetAllHumanPlayers("Current pot: " + pot);
 			}
 		}
 	}
@@ -258,12 +276,15 @@ public class RoundOfPoker {
 
 		// If at least one player can open, start the round
 		if (openingPlayer != -1) {
+			tweetAllHumanPlayers(players.get(openingPlayer).getName() + Constants.OPEN_INFORM);
 			betting(openingPlayer);
 			findWinner();
 			displayCards();
 			showChips();
 			removePlayers();
 			// no one can open, so start new round
-		} 
+		} else {
+			tweetAllHumanPlayers(Constants.NO_OPEN);
+		}
 	}
 }

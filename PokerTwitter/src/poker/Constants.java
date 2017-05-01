@@ -1,17 +1,28 @@
 package poker;
 
+import java.util.Random;
+
 public class Constants {
 
 	public static final int MAX_PLAYERS = 6;
 	public static final String NATURAL_NUMBER_REGEX = "//^\\d+$//";
 	public static final int THREAD_SLEEP_TIME = 100;
-	
+
 	// Misc.
 	public static final String HASH_TAG = "#ECMXPoker";
 	public static final String NEW_LINE = "\n";
 
-	// Game messages
+	// Game messages/questions
 	public static final String WINNER = " have won the game! Game ID: ";
+	public static final String HAND_DEALT = "You have been dealt a hand: ";
+	public static final String DISCARD_QUESTION = "Please enter the cards you want to discard? ";
+	public static final String BET_QUESTION = "Please enter the your bet? ";
+	public static final String FAILED_BET_1 = "Failed to produce valid bet, so we are going to call for you.";
+	public static final String FAILED_BET_2 = "Failed to produce valid bet, so we are going to fold for you.";
+	public static final String DISCARDED_COUNT = "You have discarded ";
+	public static final String CURRENT_HAND = "Your current hand: ";
+	public static final String NO_OPEN = "No one can open, starting a new round...";
+	public static final String OPEN_INFORM = " is able to open, get ready to bet!";
 
 	// Ack. messages
 	public static final String JOINED_ROOM = "You have joined a game of poker!";
@@ -37,5 +48,7 @@ public class Constants {
 	public static final String COMMAND_CALL = "call";
 	public static final String COMMAND_RAISE = "raise";
 	public static final String COMMAND_DISCARD = "discard";
+
+	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
 }

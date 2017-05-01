@@ -11,7 +11,6 @@ import java.util.List;
 import poker.player.AIPokerPlayerNames;
 import poker.player.HumanPokerPlayer;
 import poker.twitter.TwitterBot;
-import twitter4j.TwitterException;
 import twitter4j.User;
 
 public class PokerManager {
@@ -29,7 +28,7 @@ public class PokerManager {
 		return input.matches(Constants.NATURAL_NUMBER_REGEX);
 	}
 
-	public boolean processInput(User user, String input) throws TwitterException {
+	public boolean processInput(User user, String input) {
 		System.out.println("Input received!\nFrom: " + user.getName() + ", ID: " + user.getId() + "\nInput: " + input);
 		String[] in = input.split(" ");
 
@@ -37,34 +36,34 @@ public class PokerManager {
 		case Constants.COMMAND_PLAY: {
 			if (findPlayerPokerGame(user.getId()) == null) {
 				GameOfPoker gameOfPoker = createNewGame(user);
-				TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.GAME_CREATED + gameOfPoker.getGameId() + "\n" + Constants.YOUR_TWEET + input);
+				TwitterBot.directMessage(user.getId(), Constants.GAME_CREATED + gameOfPoker.getGameId() + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 				if (in.length == 3 && in[2].equalsIgnoreCase(Constants.COMMAND_START)) {
 					gameOfPoker.startGame();
-					TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.GAME_STARTED + "\n" + Constants.YOUR_TWEET + input);
+					TwitterBot.directMessage(user.getId(), Constants.GAME_STARTED + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 				}
 			} else {
-				TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.ALREADY_IN_A_GAME + "\n" + Constants.YOUR_TWEET + input);
+				TwitterBot.directMessage(user.getId(), Constants.ALREADY_IN_A_GAME + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 			}
 		} break;
 		case Constants.COMMAND_START: {
 			GameOfPoker gameOfPoker = findPlayerPokerGame(user.getId());
 			if (gameOfPoker != null) {
 				if (gameOfPoker.startGame()) {
-					TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.GAME_STARTED + "\n" + Constants.YOUR_TWEET + input);
+					TwitterBot.directMessage(user.getId(), Constants.GAME_STARTED + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 				} else {
-					TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.GAME_ALREADY_STARTED + "\n" + Constants.YOUR_TWEET + input);
+					TwitterBot.directMessage(user.getId(), Constants.GAME_ALREADY_STARTED + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 				}
 			} else {
-				TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.NOT_PART_OF_ROOM + "\n" + Constants.YOUR_TWEET + input);
+				TwitterBot.directMessage(user.getId(), Constants.NOT_PART_OF_ROOM + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 			}
 		} break;
 		case Constants.COMMAND_JOIN: {
 			if (isNumber(in[2])) {
 				int gameId = Integer.parseInt(in[2]);
 				findPokerGame(gameId).addPlayer(user);
-				TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.JOINED_ROOM + "\n" + Constants.YOUR_TWEET + input);
+				TwitterBot.directMessage(user.getId(), Constants.JOINED_ROOM + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 			} else {
-				TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.INCORRECT_JOIN_NUMBER + "\n" + Constants.YOUR_TWEET + input);
+				TwitterBot.directMessage(user.getId(), Constants.INCORRECT_JOIN_NUMBER + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 			}
 		} break;
 		case Constants.COMMAND_BET:
@@ -78,7 +77,7 @@ public class PokerManager {
 			}
 			break;
 		default:
-			TwitterBot.getAPI().sendDirectMessage(user.getId(), Constants.UNKNOWN_COMMAND + "\n" + Constants.YOUR_TWEET + input);
+			TwitterBot.directMessage(user.getId(), Constants.UNKNOWN_COMMAND + Constants.NEW_LINE + Constants.YOUR_TWEET + input);
 		}
 
 		return true;
