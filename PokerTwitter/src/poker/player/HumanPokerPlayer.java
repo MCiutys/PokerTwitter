@@ -50,14 +50,23 @@ public class HumanPokerPlayer extends PokerPlayer {
 				// If more than 3 card entered, just discard the first 3 cards in
 				// the string and ignore the rest.
 				for (int i = 2; i - 2 < MAX_CARDS_TO_DISCARD && i < discardInput.length; i++) {
+					System.out.println("TEST: " + discardInput[i].matches(Constants.INTEGER_REGEX));
+					System.out.println(discardInput[i]);
 					if (discardInput[i].matches(Constants.INTEGER_REGEX)) {
 						// Goes from [1-5] instead of [0-4] so minus 1
 						int disPos = Integer.valueOf(discardInput[i]) - 1;
+						System.out.println("Pass if: " + disPos);
 						hand.replaceCard(disPos);
 						disCount++;
+					} else {
+						System.out.println("does not match");
 					}
+					System.out.println("Loop yes");
 				}
 			}
+			hand.sort();
+			System.out.println("return discarcards");
+			System.out.println(hand);
 			return disCount;
 		}
 	}

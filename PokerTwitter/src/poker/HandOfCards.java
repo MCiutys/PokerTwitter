@@ -46,7 +46,7 @@ public class HandOfCards {
 		 */
 	}
 
-	public boolean addCard(PlayingCard card) {
+	public synchronized boolean addCard(PlayingCard card) {
 		boolean anyNull = false, addedCard = false;
 
 		// Replace the first null card with new card and determine
@@ -72,7 +72,7 @@ public class HandOfCards {
 		return addedCard;
 	}
 
-	public void cleanHand() {
+	public synchronized void cleanHand() {
 		for (int i = 0; i < HAND_SIZE; i++) {
 			hand[i] = null;
 		}
@@ -80,7 +80,7 @@ public class HandOfCards {
 
 	// Replaces card at given index.
 	// Return true or false depending if card was successfully replaced.
-	public boolean replaceCard(int index) {
+	public synchronized boolean replaceCard(int index) {
 		// Check if index is in bounds of the array and check that new card is not null.
 		if (index >= 0 && index < HAND_SIZE) {
 			PlayingCard newCard = deck.dealNext();
@@ -89,8 +89,8 @@ public class HandOfCards {
 				// Check if card was successfully returned.
 				if (deck.returnCard(hand[index])) {
 					// Swap old card with new one.
-					hand[index] = deck.dealNext();
-					sort();
+					hand[index] = newCard;
+					System.out.println(newCard);
 					return true;
 				}
 			}
@@ -580,7 +580,7 @@ public class HandOfCards {
 	 * Sorts hand (array of PlayingCard objects) in descending order.
 	 * Using insertion sort algorithm.
 	 */
-	private void sort() {
+	public void sort() {
 		for (int i = 0; i < HAND_SIZE; i++) {
 			PlayingCard card = hand[i];
 			for (int j = i + 1; j < HAND_SIZE; j++) {

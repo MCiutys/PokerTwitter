@@ -31,13 +31,14 @@ public class TwitterBot {
 		}
 		return api;
 	}
-	
+
 	// This method generates four digit random number hence the name.
 	// That number is then appended to the message to avoid getting the "similar message" error.
 	private static int randomFourDigitNumber() {
-		return Constants.RANDOM.nextInt((9000) + 1000);
+		String currentTime = String.valueOf(System.currentTimeMillis());
+		return Integer.parseInt(currentTime.substring(currentTime.length() - 4));
 	}
-	
+
 	private static void sleep() {
 		try {
 			Thread.sleep(20000);
